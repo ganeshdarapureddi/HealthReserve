@@ -17,50 +17,59 @@ export default function LoginForm() {
     if (state.message === 'Login successful') {
       router.push('/dashboard');
     }
-  }, [state,router]);
+  }, [state, router]);
 
   return (
     <>
-      <form action={formAction} className="login-form-container">
-        <h1 className="login-form-title">Login</h1>
+      <form action={formAction} className="bg-purple-100 border-none  shadow-2xl rounded-2xl p-10 space-y-6 ">
+        <h1 className="text-2xl text-center">Login</h1>
 
         {/* Email */}
         <div>
-          <label htmlFor="email" className="login-form-label">Email</label>
+          <label htmlFor="email" className="font-bold">Email</label><br />
           <input
             type="email"
             name="email"
             id="email"
-            className="login-form-input"
+            className="border-2 border-purple-400 w-80 bg-purple-50 focus:ring-2 focus:ring-purple-700 focus:outline-none p-2 rounded"
           />
           {state.errors?.email && (
-            <p className="login-form-error">{state.errors.email[0]}</p>
+            <p className="text-red-500">{state.errors.email[0]}</p>
           )}
         </div>
 
         {/* Password */}
         <div>
-          <label htmlFor="password" className="login-form-label">Password</label>
+          <label htmlFor="password" className="font-bold">Password</label><br />
           <input
             type="password"
             name="password"
             id="password"
-            className="login-form-input"
+            className="border-2 border-purple-400 bg-purple-50 w-80 focus:ring-2 focus:ring-purple-700 focus:outline-none p-2 rounded"
           />
         </div>
 
         {/* Submit */}
         <div>
-          <button type="submit" className="login-form-button">Login</button>
+          <button type="submit" className="block mx-auto border-2 border-purple-800 bg-purple-800 px-5 py-1.5 rounded-sm text-white hover:bg-white hover:text-purple-700 transition">
+            Login
+          </button>
         </div>
-        <p className="login-form-footer">
-          Dont have an account?{' '}
-          <Link href="/registration" className="login-form-link">Register here</Link>
+
+        {/* Footer */}
+        <p className="text-sm text-center text-gray-600">
+          Don&apos;t have an account?{' '}
+          <Link
+            href="/registration"
+            className="text-purple-700 font-semibold hover:underline hover:text-purple-900 transition"
+          >
+            Register here
+          </Link>
         </p>
       </form>
-
-      {/* Register Link */}
 
     </>
   );
 }
+
+
