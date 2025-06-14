@@ -1,9 +1,9 @@
 // src/appointments/appointments.controller.ts
-import { Body, Controller, Delete, Get, Param, Post, Put, Query } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
 import { AppointmentService } from './appointment.service';
-import { Appointment, AppointmentDocument } from './appointment.schema';
+import {  AppointmentDocument } from './appointment.schema';
 import { CreateAppointmentDto } from './dto/createAppointmentDto';
-import { IAppointment } from './Interfaces/IAppointment';
+
 
 @Controller('appointments')
 export class AppointmentController {
