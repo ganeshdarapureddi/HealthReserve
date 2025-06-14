@@ -1,0 +1,50 @@
+[
+  {
+    "id": 1749016857423,
+    "name": "ganesh",
+    "email": "ganesh@gmail.com",
+    "phone": "99999999",
+    "password": "Nani@1234",
+    "role": "user"
+  },
+  {
+    "id": 1749114309685,
+    "name": "ganesh1",
+    "email": "ganesh1@gmail.com",
+    "phone": "99999999",
+    "password": "1234",
+    "role": "admin"
+  },
+  {
+    "id": 1749116292602,
+    "name": "ganesh2",
+    "email": "ganesh2@gmail.com",
+    "phone": "99999999",
+    "password": "1234",
+    "role": "user"
+  },
+  {
+    "id": 1749116454129,
+    "name": "ganesh4",
+    "email": "ganesh3@gmai.com",
+    "phone": "99999999",
+    "password": "1234",
+    "role": "user"
+  },
+  {
+    "id": 1749209652134,
+    "name": "user",
+    "email": "user@gmail.com",
+    "phone": "951515189",
+    "password": "1234",
+    "role": "user"
+  },
+  {
+    "id": 1749462678623,
+    "name": "lokesh",
+    "email": "lokesh@gmail.com",
+    "phone": "9502219363",
+    "password": "1234",
+    "role": "user"
+  }
+]

@@ -1,0 +1,578 @@
+[
+  {
+    "id": 1,
+    "name": "Dr. Aisha Khan",
+    "specialization": "Cardiologist",
+    "experience": 12,
+    "slots": [
+      {
+        "time": "09:00 AM - 09:30 AM",
+        "booked": true
+      },
+      {
+        "time": "09:30 AM - 10:00 AM",
+        "booked": false
+      },
+      {
+        "time": "10:00 AM - 10:30 AM",
+        "booked": true
+      },
+      {
+        "time": "10:30 AM - 11:00 AM",
+        "booked": false
+      },
+      {
+        "time": "11:00 AM - 11:30 AM",
+        "booked": false
+      },
+      {
+        "time": "11:30 AM - 12:00 PM",
+        "booked": true
+      },
+      {
+        "time": "02:00 PM - 02:30 PM",
+        "booked": false
+      },
+      {
+        "time": "02:30 PM - 03:00 PM",
+        "booked": false
+      },
+      {
+        "time": "03:00 PM - 03:30 PM",
+        "booked": false
+      },
+      {
+        "time": "03:30 PM - 04:00 PM",
+        "booked": false
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "name": "Dr. Raj Mehta",
+    "specialization": "Dermatologist",
+    "experience": 9,
+    "slots": [
+      {
+        "time": "09:00 AM - 09:30 AM",
+        "booked": false
+      },
+      {
+        "time": "09:30 AM - 10:00 AM",
+        "booked": false
+      },
+      {
+        "time": "10:00 AM - 10:30 AM",
+        "booked": false
+      },
+      {
+        "time": "10:30 AM - 11:00 AM",
+        "booked": false
+      },
+      {
+        "time": "11:00 AM - 11:30 AM",
+        "booked": false
+      },
+      {
+        "time": "11:30 AM - 12:00 PM",
+        "booked": false
+      },
+      {
+        "time": "02:00 PM - 02:30 PM",
+        "booked": false
+      },
+      {
+        "time": "02:30 PM - 03:00 PM",
+        "booked": false
+      },
+      {
+        "time": "03:00 PM - 03:30 PM",
+        "booked": false
+      },
+      {
+        "time": "03:30 PM - 04:00 PM",
+        "booked": false
+      }
+    ]
+  },
+  {
+    "id": 3,
+    "name": "Dr. Sneha Reddy",
+    "specialization": "Pediatrician",
+    "experience": 15,
+    "slots": [
+      {
+        "time": "09:00 AM - 09:30 AM",
+        "booked": false
+      },
+      {
+        "time": "09:30 AM - 10:00 AM",
+        "booked": false
+      },
+      {
+        "time": "10:00 AM - 10:30 AM",
+        "booked": false
+      },
+      {
+        "time": "10:30 AM - 11:00 AM",
+        "booked": false
+      },
+      {
+        "time": "11:00 AM - 11:30 AM",
+        "booked": false
+      },
+      {
+        "time": "11:30 AM - 12:00 PM",
+        "booked": false
+      },
+      {
+        "time": "02:00 PM - 02:30 PM",
+        "booked": false
+      },
+      {
+        "time": "02:30 PM - 03:00 PM",
+        "booked": false
+      },
+      {
+        "time": "03:00 PM - 03:30 PM",
+        "booked": false
+      },
+      {
+        "time": "03:30 PM - 04:00 PM",
+        "booked": false
+      }
+    ]
+  },
+  {
+    "id": 4,
+    "name": "Dr. Arjun Patel",
+    "specialization": "Orthopedic Surgeon",
+    "experience": 11,
+    "slots": [
+      {
+        "time": "09:00 AM - 09:30 AM",
+        "booked": false
+      },
+      {
+        "time": "09:30 AM - 10:00 AM",
+        "booked": false
+      },
+      {
+        "time": "10:00 AM - 10:30 AM",
+        "booked": false
+      },
+      {
+        "time": "10:30 AM - 11:00 AM",
+        "booked": false
+      },
+      {
+        "time": "11:00 AM - 11:30 AM",
+        "booked": false
+      },
+      {
+        "time": "11:30 AM - 12:00 PM",
+        "booked": false
+      },
+      {
+        "time": "02:00 PM - 02:30 PM",
+        "booked": false
+      },
+      {
+        "time": "02:30 PM - 03:00 PM",
+        "booked": false
+      },
+      {
+        "time": "03:00 PM - 03:30 PM",
+        "booked": false
+      },
+      {
+        "time": "03:30 PM - 04:00 PM",
+        "booked": false
+      }
+    ]
+  },
+  {
+    "id": 5,
+    "name": "Dr. Neha Sharma",
+    "specialization": "Gynecologist",
+    "experience": 8,
+    "slots": [
+      {
+        "time": "09:00 AM - 09:30 AM",
+        "booked": false
+      },
+      {
+        "time": "09:30 AM - 10:00 AM",
+        "booked": false
+      },
+      {
+        "time": "10:00 AM - 10:30 AM",
+        "booked": false
+      },
+      {
+        "time": "10:30 AM - 11:00 AM",
+        "booked": false
+      },
+      {
+        "time": "11:00 AM - 11:30 AM",
+        "booked": false
+      },
+      {
+        "time": "11:30 AM - 12:00 PM",
+        "booked": false
+      },
+      {
+        "time": "02:00 PM - 02:30 PM",
+        "booked": false
+      },
+      {
+        "time": "02:30 PM - 03:00 PM",
+        "booked": false
+      },
+      {
+        "time": "03:00 PM - 03:30 PM",
+        "booked": false
+      },
+      {
+        "time": "03:30 PM - 04:00 PM",
+        "booked": false
+      }
+    ]
+  },
+  {
+    "id": 6,
+    "name": "Dr. Karan Kapoor",
+    "specialization": "Neurologist",
+    "experience": 10,
+    "slots": [
+      {
+        "time": "09:00 AM - 09:30 AM",
+        "booked": false
+      },
+      {
+        "time": "09:30 AM - 10:00 AM",
+        "booked": false
+      },
+      {
+        "time": "10:00 AM - 10:30 AM",
+        "booked": false
+      },
+      {
+        "time": "10:30 AM - 11:00 AM",
+        "booked": false
+      },
+      {
+        "time": "11:00 AM - 11:30 AM",
+        "booked": false
+      },
+      {
+        "time": "11:30 AM - 12:00 PM",
+        "booked": false
+      },
+      {
+        "time": "02:00 PM - 02:30 PM",
+        "booked": false
+      },
+      {
+        "time": "02:30 PM - 03:00 PM",
+        "booked": false
+      },
+      {
+        "time": "03:00 PM - 03:30 PM",
+        "booked": false
+      },
+      {
+        "time": "03:30 PM - 04:00 PM",
+        "booked": false
+      }
+    ]
+  },
+  {
+    "id": 7,
+    "name": "Dr. Priya Desai",
+    "specialization": "ENT Specialist",
+    "experience": 7,
+    "slots": [
+      {
+        "time": "09:00 AM - 09:30 AM",
+        "booked": false
+      },
+      {
+        "time": "09:30 AM - 10:00 AM",
+        "booked": false
+      },
+      {
+        "time": "10:00 AM - 10:30 AM",
+        "booked": false
+      },
+      {
+        "time": "10:30 AM - 11:00 AM",
+        "booked": false
+      },
+      {
+        "time": "11:00 AM - 11:30 AM",
+        "booked": false
+      },
+      {
+        "time": "11:30 AM - 12:00 PM",
+        "booked": false
+      },
+      {
+        "time": "02:00 PM - 02:30 PM",
+        "booked": false
+      },
+      {
+        "time": "02:30 PM - 03:00 PM",
+        "booked": false
+      },
+      {
+        "time": "03:00 PM - 03:30 PM",
+        "booked": false
+      },
+      {
+        "time": "03:30 PM - 04:00 PM",
+        "booked": false
+      }
+    ]
+  },
+  {
+    "id": 8,
+    "name": "Dr. Rohit Singh",
+    "specialization": "General Physician",
+    "experience": 13,
+    "slots": [
+      {
+        "time": "09:00 AM - 09:30 AM",
+        "booked": false
+      },
+      {
+        "time": "09:30 AM - 10:00 AM",
+        "booked": false
+      },
+      {
+        "time": "10:00 AM - 10:30 AM",
+        "booked": false
+      },
+      {
+        "time": "10:30 AM - 11:00 AM",
+        "booked": false
+      },
+      {
+        "time": "11:00 AM - 11:30 AM",
+        "booked": false
+      },
+      {
+        "time": "11:30 AM - 12:00 PM",
+        "booked": false
+      },
+      {
+        "time": "02:00 PM - 02:30 PM",
+        "booked": false
+      },
+      {
+        "time": "02:30 PM - 03:00 PM",
+        "booked": false
+      },
+      {
+        "time": "03:00 PM - 03:30 PM",
+        "booked": false
+      },
+      {
+        "time": "03:30 PM - 04:00 PM",
+        "booked": false
+      }
+    ]
+  },
+  {
+    "id": 9,
+    "name": "Dr. Anjali Verma",
+    "specialization": "Psychiatrist",
+    "experience": 9,
+    "slots": [
+      {
+        "time": "09:00 AM - 09:30 AM",
+        "booked": false
+      },
+      {
+        "time": "09:30 AM - 10:00 AM",
+        "booked": false
+      },
+      {
+        "time": "10:00 AM - 10:30 AM",
+        "booked": false
+      },
+      {
+        "time": "10:30 AM - 11:00 AM",
+        "booked": false
+      },
+      {
+        "time": "11:00 AM - 11:30 AM",
+        "booked": false
+      },
+      {
+        "time": "11:30 AM - 12:00 PM",
+        "booked": false
+      },
+      {
+        "time": "02:00 PM - 02:30 PM",
+        "booked": false
+      },
+      {
+        "time": "02:30 PM - 03:00 PM",
+        "booked": false
+      },
+      {
+        "time": "03:00 PM - 03:30 PM",
+        "booked": false
+      },
+      {
+        "time": "03:30 PM - 04:00 PM",
+        "booked": false
+      }
+    ]
+  },
+  {
+    "id": 10,
+    "name": "Dr. Vikram Joshi",
+    "specialization": "Urologist",
+    "experience": 14,
+    "slots": [
+      {
+        "time": "09:00 AM - 09:30 AM",
+        "booked": false
+      },
+      {
+        "time": "09:30 AM - 10:00 AM",
+        "booked": false
+      },
+      {
+        "time": "10:00 AM - 10:30 AM",
+        "booked": false
+      },
+      {
+        "time": "10:30 AM - 11:00 AM",
+        "booked": false
+      },
+      {
+        "time": "11:00 AM - 11:30 AM",
+        "booked": false
+      },
+      {
+        "time": "11:30 AM - 12:00 PM",
+        "booked": false
+      },
+      {
+        "time": "02:00 PM - 02:30 PM",
+        "booked": false
+      },
+      {
+        "time": "02:30 PM - 03:00 PM",
+        "booked": false
+      },
+      {
+        "time": "03:00 PM - 03:30 PM",
+        "booked": false
+      },
+      {
+        "time": "03:30 PM - 04:00 PM",
+        "booked": false
+      }
+    ]
+  },
+  {
+    "id": 11,
+    "name": "Dr. Meera Iyer",
+    "specialization": "Oncologist",
+    "experience": 12,
+    "slots": [
+      {
+        "time": "09:00 AM - 09:30 AM",
+        "booked": false
+      },
+      {
+        "time": "09:30 AM - 10:00 AM",
+        "booked": false
+      },
+      {
+        "time": "10:00 AM - 10:30 AM",
+        "booked": false
+      },
+      {
+        "time": "10:30 AM - 11:00 AM",
+        "booked": false
+      },
+      {
+        "time": "11:00 AM - 11:30 AM",
+        "booked": false
+      },
+      {
+        "time": "11:30 AM - 12:00 PM",
+        "booked": false
+      },
+      {
+        "time": "02:00 PM - 02:30 PM",
+        "booked": false
+      },
+      {
+        "time": "02:30 PM - 03:00 PM",
+        "booked": false
+      },
+      {
+        "time": "03:00 PM - 03:30 PM",
+        "booked": false
+      },
+      {
+        "time": "03:30 PM - 04:00 PM",
+        "booked": false
+      }
+    ]
+  },
+  {
+    "id": 12,
+    "name": "Dr. Sanjay Rao",
+    "specialization": "Endocrinologist",
+    "experience": 10,
+    "slots": [
+      {
+        "time": "09:00 AM - 09:30 AM",
+        "booked": false
+      },
+      {
+        "time": "09:30 AM - 10:00 AM",
+        "booked": false
+      },
+      {
+        "time": "10:00 AM - 10:30 AM",
+        "booked": false
+      },
+      {
+        "time": "10:30 AM - 11:00 AM",
+        "booked": false
+      },
+      {
+        "time": "11:00 AM - 11:30 AM",
+        "booked": false
+      },
+      {
+        "time": "11:30 AM - 12:00 PM",
+        "booked": false
+      },
+      {
+        "time": "02:00 PM - 02:30 PM",
+        "booked": true
+      },
+      {
+        "time": "02:30 PM - 03:00 PM",
+        "booked": false
+      },
+      {
+        "time": "03:00 PM - 03:30 PM",
+        "booked": false
+      },
+      {
+        "time": "03:30 PM - 04:00 PM",
+        "booked": false
+      }
+    ]
+  }
+]

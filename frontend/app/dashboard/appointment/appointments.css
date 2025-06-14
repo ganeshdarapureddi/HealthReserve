@@ -1,0 +1,45 @@
+.appointment-page {
+    padding: 24px;
+    font-family: Arial, sans-serif;
+    text-align: center;
+  }
+  
+  h1 {
+    font-size: 2rem;
+    margin-bottom: 24px;
+  }
+  
+  .appointment-card {
+    background-color: #f0f4f8;
+    border: 1px solid #ddd;
+    padding: 20px;
+    border-radius: 12px;
+    max-width: 500px;
+    margin: 0 auto;
+    box-shadow: 2px 4px 10px rgba(0, 0, 0, 0.05);
+  }
+  
+  .appointment-card p {
+    margin: 8px 0;
+    font-size: 16px;
+  }
+  
+  .no-appointment {
+    margin-top: 40px;
+  }
+  
+  .book-btn {
+    display: inline-block;
+    margin-top: 12px;
+    padding: 10px 20px;
+    background-color: #3b82f6;
+    color: white;
+    text-decoration: none;
+    border-radius: 6px;
+    transition: background-color 0.3s ease;
+  }
+  
+  .book-btn:hover {
+    background-color: #2563eb;
+  }
+  
