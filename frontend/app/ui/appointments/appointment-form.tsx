@@ -2,7 +2,6 @@
 
 import { useActionState, useState } from 'react';
 import { bookAppointment, AppointmentState } from '@/app/lib/action';
-import './appointment-form.css';
 
 interface AppointmentFormProps {
   doctors: {
@@ -35,24 +34,36 @@ export default function AppointmentForm({ doctors }: AppointmentFormProps) {
   };
 
   return (
-    <form action={formAction} className="appointment-form">
-      <div className="appointment-fields">
+    <form
+      action={formAction}
+      className="bg-purple-50 p-10 rounded-xl shadow-xl max-w-3xl mx-auto my-12 font-sans"
+    >
+      <div className="flex flex-col gap-5">
         {/* Patient Name */}
         <div>
-          <label htmlFor="patientName" className="appointment-label">Patient Name</label>
-          <input type="text" name="patientName" id="patientName" className="appointment-input1" />
+          <label htmlFor="patientName" className="block text-md font-semibold text-gray-700 mb-1">
+            Patient Name
+          </label>
+          <input
+            type="text"
+            name="patientName"
+            id="patientName"
+            className="w-full px-3 py-2 border border-gray-300  bg-white rounded-md text-base  focus:outline-none focus:ring-2 focus:ring-purple-400"
+          />
           {state.errors?.patientName && (
-            <p className="appointment-error">{state.errors.patientName[0]}</p>
+            <p className="text-red-500 text-sm mt-1">{state.errors.patientName[0]}</p>
           )}
         </div>
 
         {/* Doctor */}
         <div>
-          <label htmlFor="doctorId" className="appointment-label">Select Doctor</label>
+          <label htmlFor="doctorId" className="block text-md font-semibold text-gray-700 mb-1">
+            Select Doctor
+          </label>
           <select
             name="doctorId"
             id="doctorId"
-            className="appointment-input"
+            className="w-full px-3 py-2 border border-gray-300  bg-white rounded-md text-base font-serif  focus:outline-none focus:ring-2 focus:ring-purple-400"
             onChange={handleDoctorChange}
             value={selectedDoctor._id}
           >
@@ -63,35 +74,48 @@ export default function AppointmentForm({ doctors }: AppointmentFormProps) {
             ))}
           </select>
           {state.errors?.doctorId && (
-            <p className="appointment-error">{state.errors.doctorId[0]}</p>
+            <p className="text-red-500 text-sm mt-1">{state.errors.doctorId[0]}</p>
           )}
         </div>
 
         {/* Slot */}
         <div>
-          <label htmlFor="slot" className="appointment-label">Select Slot</label>
+          <label htmlFor="slot" className="block text-md font-semibold text-gray-700 mb-1">
+            Select Slot
+          </label>
           <select
             name="slot"
             id="slot"
-            className="appointment-input"
+            className="w-full px-3 py-2 border border-gray-300  bg-white rounded-md text-base   focus:outline-none focus:ring-2 focus:ring-purple-400"
             onChange={handleSlotChange}
             value={selectedSlot?.time}
           >
             {selectedDoctor.slots.map((slot) => (
               <option key={slot.time} value={slot.time} disabled={slot.booked}>
-                {slot.time} {slot.booked ? ' (Booked)' : ''}
+                {slot.time} {slot.booked ? '(Booked)' : ''}
               </option>
             ))}
           </select>
-          {state.errors?.slot && <p className="appointment-error">{state.errors.slot[0]}</p>}
+          {state.errors?.slot && (
+            <p className="text-red-500 text-sm mt-1">{state.errors.slot[0]}</p>
+          )}
         </div>
       </div>
 
-      <div className="appointment-submit">
-        <button type="submit">Book Appointment</button>
+      {/* Submit Button */}
+      <div className="flex justify-end mt-8">
+        <button
+          type="submit"
+          className="px-6 py-3 text-white font-semibold rounded-lg bg-gradient-to-r from-purple-600 to-indigo-700 hover:from-purple-700 hover:to-indigo-800 text-center transition"
+        >
+          Book Appointment
+        </button>
       </div>
 
-      {state.message && <p className="appointment-success">{state.message}</p>}
+      {/* Success Message */}
+      {state.message && (
+        <p className="text-green-600 mt-4 text-center font-medium">{state.message}</p>
+      )}
     </form>
   );
 }

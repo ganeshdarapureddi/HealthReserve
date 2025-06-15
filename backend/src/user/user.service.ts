@@ -35,16 +35,16 @@ export class UserService {
       }
   }
 
-  async update(id: string, updateData: Partial<User>): Promise<User> {
-    const updated = await this.userModel.findByIdAndUpdate(id, updateData, { new: true });
-    if (!updated) throw new NotFoundException('User not found');
-    return updated;
-  }
+  // async update(id: string, updateData: Partial<User>): Promise<User> {
+  //   const updated = await this.userModel.findByIdAndUpdate(id, updateData, { new: true });
+  //   if (!updated) throw new NotFoundException('User not found');
+  //   return updated;
+  // }
 
-  async delete(id: string): Promise<{ message: string }> {
-    const result = await this.userModel.findByIdAndDelete(id);
-    if (!result) throw new NotFoundException('User not found');
-    return { message: 'User deleted successfully' };
-  }
+  // async delete(id: string): Promise<{ message: string }> {
+  //   const result = await this.userModel.findByIdAndDelete(id);
+  //   if (!result) throw new NotFoundException('User not found');
+  //   return { message: 'User deleted successfully' };
+  // }
 
 }

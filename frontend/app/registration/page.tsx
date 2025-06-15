@@ -1,58 +1,65 @@
 'use client';
-
 import { useActionState } from 'react';
 import { registerUser, RegisterState } from '@/app/lib/action';
-import './registration.css';
+
+import Link from 'next/link';
 
 export default function RegisterPage() {
   const initialState: RegisterState = { message: undefined, errors: {} };
   const [state, formAction] = useActionState(registerUser, initialState);
 
   return (
-    <div>
-      <form action={formAction} className="register-form">
-        <h2>Register</h2>
+    <div className='flex flex-col  min-h-screen justify-center items-center bg-cover '
+      style={{
+        backgroundImage: "url('/register-image.jpg')",
+
+      }}>
+      <form action={formAction} className="bg-purple-100 border-none p-7 space-y-2 rounded-2xl shadow-2xl px-9">
+        <h2 className='text-2xl font-bold text-center'>Register</h2>
 
         <div>
-          <label>Name</label>
-          <input type="text" name="name" required />
-          {state.errors?.name && <p>{state.errors.name[0]}</p>}
+          <label className="font-bold">Name</label><br />
+          <input type="text" name="name" className="border-2 border-purple-400 w-80 bg-purple-50 focus:ring-2 focus:ring-purple-700 focus:outline-none p-2 rounded" required />
+          {state.errors?.name && <p className='text-red-500'>{state.errors.name[0]}</p>}
         </div>
 
         <div>
-          <label>Email</label>
-          <input type="email" name="email" required />
-          {state.errors?.email && <p>{state.errors.email[0]}</p>}
+          <label className="font-bold">Email</label><br />
+          <input type="email" name="email" className="border-2 border-purple-400 w-80 bg-purple-50 focus:ring-2 focus:ring-purple-700 focus:outline-none p-2 rounded" required />
+          {state.errors?.email && <p className='text-red-500'>{state.errors.email[0]}</p>}
         </div>
 
         <div>
-          <label>Phone Number</label>
-          <input type="tel" name="phone" required />
-          {state.errors?.phone && <p>{state.errors.phone[0]}</p>}
+          <label className="font-bold">Phone Number</label><br />
+          <input type="tel" name="phone" className="border-2 border-purple-400 w-80 bg-purple-50 focus:ring-2 focus:ring-purple-700 focus:outline-none p-2 rounded" required />
+          {state.errors?.phone && <p className='text-red-500'>{state.errors.phone[0]}</p>}
         </div>
 
         <div>
-          <label>Password</label>
-          <input type="password" name="password" required />
-          {state.errors?.password && <p>{state.errors.password[0]}</p>}
+          <label className="font-bold">Password</label><br />
+          <input type="password" name="password" className="border-2 border-purple-400 w-80 bg-purple-50 focus:ring-2 focus:ring-purple-700 focus:outline-none p-2 rounded" required />
+          {state.errors?.password && <p className='text-red-500' >{state.errors.password[0]}</p>}
         </div>
 
         <div>
-          <label>Confirm Password</label>
-          <input type="password" name="confirmPassword" required />
-          {state.errors?.confirmPassword && <p>{state.errors.confirmPassword[0]}</p>}
+          <label className="font-bold">Confirm Password</label><br />
+          <input type="password" name="confirmPassword" className="border-2 border-purple-400 w-80 bg-purple-50 focus:ring-2 focus:ring-purple-700 focus:outline-none p-2 rounded" required />
+          {state.errors?.confirmPassword && <p className='text-red-500'>{state.errors.confirmPassword[0]}</p>}
         </div>
 
-        <button type="submit">Register</button>
-        {state.message && <p className="success">{state.message}</p>}
+        <button type="submit" className="block mx-auto border-2 mt-4 border-purple-800 bg-purple-800 px-5 py-1.5 rounded-sm text-white hover:bg-white hover:text-purple-700 transition">Register</button>
+        {state.message && <p className="text-green-600 text-center">{state.message}</p>}
         {state.errors?.general && <p className="error">{state.errors.general[0]}</p>}
+        <div className="text-center mt-4">
+          <Link
+            href="/login"
+            className="text-purple-700 font-semibold hover:underline hover:text-purple-900 transition"
+          >
+            Return to Login
+          </Link>
+        </div>
       </form>
 
-      <p className="register-form-footer">
-        <a href="/login" className="register-form-link">
-          Return to login
-        </a>
-      </p>
     </div>
   );
 }
