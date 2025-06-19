@@ -12,9 +12,9 @@ export default async function Layout({ children }: { children: React.ReactNode }
   console.log("user at layout", userRole);
 
   return (
-    <div className="flex flex-col md:flex-row h-screen overflow-hidden">
+    <div className="min-h-screen flex flex-col   md:flex-row">
       {/* Sidebar */}
-      <div className="w-full md:w-[280px] flex-shrink-0">
+      <div className="w-full md:w-[280px]">
         <SideNav userId={userId} userRole={userRole} />
       </div>
 

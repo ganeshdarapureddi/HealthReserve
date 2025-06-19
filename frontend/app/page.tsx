@@ -8,7 +8,7 @@ export default function IntroductionPage() {
     <section className="min-h-screen flex flex-col flex-wrap justify-center items-center md:flex-row ">
       <div className="md:w-1/2">
         <h1 className='font-bold text-3xl  font-sans mb-10'>Welcome to <span className="text-6xl  font-normal bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-purple-900">Health Reserve</span></h1>
-        <p className='w-3/4 text-gray-500 mb-7 font-serif line-'>
+        <p className='w-3/4 text-gray-500 mb-7 font-serif'>
           HealthReserve is your all-in-one platform for managing health. <br />
           Book appointments with top-rated doctors anytime, anywhere. <br />
           Stay organized with your personalized health schedule. <br />

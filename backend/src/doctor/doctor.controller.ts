@@ -1,8 +1,14 @@
 // src/doctors/doctor.controller.ts
-import { Controller, Post, Get, Body, Patch, Param } from '@nestjs/common';
+import { Controller, Post, Get, Body, Patch, Param, UseGuards } from '@nestjs/common';
 import { DoctorService } from './doctor.service';
 import { Doctor } from './doctor.schema';
+import { UpdateSlotStatusDto } from './Dto/updateSlotStatusDto';
+import { ApiBearerAuth, ApiBody } from '@nestjs/swagger';
+import { JwtAuthGuard } from 'src/guards/jwt-auth.guard';
 
+
+@ApiBearerAuth('jwt-auth')//should be added to get the authorize button at top 
+@UseGuards(JwtAuthGuard)
 @Controller('doctors')
 export class DoctorController {
   constructor(private readonly doctorService: DoctorService) {}
@@ -12,11 +18,15 @@ export class DoctorController {
   }
 
   @Patch(':id')
+  @ApiBody({ type:UpdateSlotStatusDto  })
   async updateSlotStatus(
     @Param('id') doctorId: string,
-    @Body() body: { slot: string; status: boolean }
+    @Body() updateSlotStatusDto: UpdateSlotStatusDto
   ) {
-    const { slot, status } = body;
-    return this.doctorService.updateSlotStatus(doctorId, slot, status);
+    // console.log(updateSlotStatusDto)
+    const { slot, status } = updateSlotStatusDto;
+    // console.log(updateSlotStatusDto.slot)
+    // console.log(slot,status)
+    return this.doctorService.updateSlotStatus(doctorId, updateSlotStatusDto.slot, updateSlotStatusDto.status);
   }
 }

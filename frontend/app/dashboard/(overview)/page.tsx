@@ -1,39 +1,56 @@
 // app/dashboard/page.tsx
-import { cookies } from 'next/headers';
-import DashboardUI from '@/app/ui/dashboard/dashboard';
-import { getAppointments, getDoctors, getUsers, getUserById } from '@/app/lib/data';
 
-import { validateToken } from '@/app/lib/auth';
+import DashboardUI from '@/app/ui/dashboard/dashboard';
+import {
+  getAppointments,
+  getDoctors,
+  getUsers,
+  getUserById
+} from '@/app/lib/data';
+import { GetCookie } from '@/app/lib/cookieStore/getCookie';
 
 export default async function DashboardPage() {
-  const cookieStore = cookies();
-  const userId1 = (await cookieStore).get('userId')?.value;
-  const userId=validateToken(userId1)
-
+  const userId = await GetCookie("userId");
+  const userRole = await GetCookie("userRole");
 
   if (!userId) {
     return <p>Unauthorized: No user ID found in cookies.</p>;
   }
 
-  const [appointments, users, doctors, user] = await Promise.all([
-    getAppointments(),
-    getUsers(),
-    getDoctors(),
-    getUserById(userId), 
-  ]);
+  const [user,doctors] = await Promise.all([getUserById(userId),getDoctors()])
 
-  const userAppointments = appointments.filter(
-    (appointment) => appointment.user._id === userId
-  );
+  let totalAppointments = 0;
+  let userAppointments = 0;
+  let totalDoctors = 0;
+  let totalUsers = 0;
+  
+  totalDoctors = doctors.length;
+
+  if (userRole === 'admin') {
+    const [appointments, users] = await Promise.all([
+      getAppointments(),
+      getUsers(),
+      
+    ]);
+
+    totalAppointments = appointments.length;
+   
+    totalUsers = users.length;
+
+    // admin can see all appointments
+    userAppointments = appointments.filter(a => a.user._id === userId).length;
+  }
+
+
 
   return (
     <DashboardUI
       role={user.role || ''}
       name={user?.name || ''}
-      totalAppointments={appointments.length}
-      userAppointments={userAppointments.length}
-      totalDoctors={doctors.length}
-      totalUsers={users.length}
+      totalAppointments={totalAppointments}
+      userAppointments={userAppointments}
+      totalDoctors={totalDoctors}
+      totalUsers={totalUsers}
     />
   );
 }

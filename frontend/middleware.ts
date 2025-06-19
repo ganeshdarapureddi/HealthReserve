@@ -9,7 +9,7 @@ export function middleware(request: NextRequest) {
 
   const userId = validateToken(userIdToken);
   const userRole = validateToken(userRoleToken);
-
+  
   if (!userId && path.startsWith("/dashboard")) {
     return NextResponse.redirect(new URL("/login", request.url));
   }

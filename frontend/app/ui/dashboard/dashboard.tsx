@@ -1,6 +1,5 @@
 'use client';
-
-import Link from 'next/link';
+import ButtonLink from '../button/ButtonLink';
 
 interface Props {
   role: string;
@@ -32,7 +31,7 @@ export default function DashboardUI({
       {/* Info Cards */}
       <div className="flex flex-wrap justify-center gap-6">
         <div className="p-6 min-w-[280px] bg-gradient-to-br from-purple-700 to-indigo-800 text-white text-center rounded-xl shadow-lg">
-          Appointments: {role === 'admin' ? totalAppointments : userAppointments}
+          Appointments: {role === 'admin' ? totalAppointments : 1}
         </div>
         <div className="p-6 min-w-[280px] bg-gradient-to-br from-purple-700 to-indigo-800 text-white text-center rounded-xl shadow-lg">
           Doctors: {totalDoctors}
@@ -47,28 +46,13 @@ export default function DashboardUI({
       {/* Action Buttons */}
       <div className="flex flex-col sm:flex-row gap-4 justify-center mt-10">
         {role === 'admin' ? (
-          <Link
-            href="/dashboard/admin"
-            className="px-6 py-3 text-white font-semibold rounded-lg bg-gradient-to-r from-purple-600 to-indigo-700 hover:from-purple-700 hover:to-indigo-800 text-center transition"
-          >
-            Manage Appointments
-          </Link>
+          <ButtonLink route={"dashboard/admin"}>Manage Appointments</ButtonLink>
         ) : (
           <>
             {userAppointments !== 1 && (
-              <Link
-                href="/dashboard/appointment/book"
-                className="px-6 py-3 text-white font-semibold rounded-lg bg-gradient-to-r from-purple-600 to-indigo-700 hover:from-purple-700 hover:to-indigo-800 text-center transition"
-              >
-                Book Appointment
-              </Link>
+              <ButtonLink route={"dashboard/appointment/book"}>Book Appointment</ButtonLink>
             )}
-            <Link
-              href="/dashboard/appointment"
-              className="px-6 py-3 text-white font-semibold rounded-lg bg-gradient-to-r from-purple-600 to-indigo-700 hover:from-purple-700 hover:to-indigo-800 text-center transition"
-            >
-              My Appointments
-            </Link>
+            <ButtonLink route={"dashboard/appointment"}>My Appointment</ButtonLink>
           </>
         )}
       </div>
