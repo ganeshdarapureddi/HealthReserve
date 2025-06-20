@@ -3,7 +3,7 @@
 import { usePathname } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useUser } from '@/app/usecontext';
+import { useUser } from '@/app/context';
 
 export default function NavLinks() {
   const pathname = usePathname();
@@ -25,14 +25,14 @@ export default function NavLinks() {
   const linksToRender = user?.userRole === 'admin' ? navLinksAdmin : navLinksUser;
 
   return (
-    <nav className="flex w-full flex-row md:flex-col  space-x-2 md: px-2 md:px-4 gap-2 md:space-x-2 md:space-y-2 mt-2">
+    <nav className="flex w-full flex-row md:flex-col  space-x-2 md:px-4 gap-5 md:space-x-2 md:space-y-2 mt-2">
       {linksToRender.map((link) => {
         const isActive = pathname === link.href;  
         return (
           <Link
             key={link.name}
             href={link.href}
-            className={`flex items-center  gap-6 px-3 py-2 rounded transition whitespace-nowrap ${
+            className={`flex items-center   gap-6 px-6 py-2 rounded transition whitespace-nowrap ${
               isActive
                 ? 'bg-purple-200 text-purple-700 font-semibold'
                 : 'text-gray-600 hover:bg-purple-100 hover:text-purple-700'

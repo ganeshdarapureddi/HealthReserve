@@ -3,11 +3,11 @@
 import Image from 'next/image';
 import NavLinks from './navlinks';
 import { logout } from '@/app/lib/action';
-import { UserContext } from '@/app/usecontext';
+import { UserContext } from '@/app/context';
 
 interface Props {
-  userId: string | boolean;
-  userRole: string | boolean;
+  userId: string | null;
+  userRole: string | null;
 }
 
 export default function SideNav(props: Props) {
@@ -21,14 +21,17 @@ export default function SideNav(props: Props) {
         </div>
 
         {/* Nav Links */}
+       
         <UserContext.Provider value={{ userId: props.userId, userRole: props.userRole }}>
           <NavLinks />
         </UserContext.Provider>
+        
+
 
         {/* Sign out button - sticks to bottom only on desktop */}
         <div className="md:mt-auto p-4 w-full ">
           <form action={logout}>
-            <button className="w-40 px-4 py-2 text-white font-semibold rounded-lg bg-gradient-to-r from-purple-600 to-indigo-700 md:w-full hover:from-purple-700 hover:to-indigo-800 transition ">
+            <button className="w-30 px-4 py-2 text-white font-semibold rounded-lg bg-gradient-to-r from-purple-600 to-indigo-700 md:w-full hover:from-purple-700 hover:to-indigo-800 transition ">
               Sign Out
             </button>
           </form>

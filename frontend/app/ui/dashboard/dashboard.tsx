@@ -31,7 +31,7 @@ export default function DashboardUI({
       {/* Info Cards */}
       <div className="flex flex-wrap justify-center gap-6">
         <div className="p-6 min-w-[280px] bg-gradient-to-br from-purple-700 to-indigo-800 text-white text-center rounded-xl shadow-lg">
-          Appointments: {role === 'admin' ? totalAppointments : 1}
+          Appointments: {role === 'admin' ? totalAppointments : userAppointments}
         </div>
         <div className="p-6 min-w-[280px] bg-gradient-to-br from-purple-700 to-indigo-800 text-white text-center rounded-xl shadow-lg">
           Doctors: {totalDoctors}
