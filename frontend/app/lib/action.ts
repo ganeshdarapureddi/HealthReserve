@@ -122,7 +122,15 @@ export async function getUserAppointment(): Promise<Appointment | null> {
 export type RegisterState = {
   message?: string;
   errors?: { [key: string]: string[] };
+  value?: {
+    name?: string;
+    email?: string;
+    phone?: string;
+    password?: string;
+    confirmPassword?: string;
+  };
 };
+
 
 function errorMessageFields(message: string): string {
   const lower = message.toLowerCase();
@@ -153,9 +161,11 @@ export async function registerUser(
   if (password !== confirmPassword)
     errors.confirmPassword = ["Passwords do not match"];
 
-  if (Object.keys(errors).length > 0) return { errors };
+  const formValues = { name, email, phone, password, confirmPassword };
 
-  const token = GetTokenFromCookie("token");
+  if (Object.keys(errors).length > 0) {
+    return { errors, value: formValues };
+  }
 
   try {
     const res = await fetch(
@@ -180,12 +190,15 @@ export async function registerUser(
           backendErrors[field].push(msg);
         }
       } else if (typeof data.message === "string") {
-        console.log(data.message);
         const field = errorMessageFields(data.message);
         backendErrors[field] = [data.message];
       }
 
-      return { message: "Registration failed", errors: backendErrors };
+      return {
+        message: "Registration failed",
+        errors: backendErrors,
+        value: formValues,
+      };
     }
 
     return { message: "Registration successful!", errors: {} };
@@ -193,13 +206,18 @@ export async function registerUser(
     return {
       message: "Server error",
       errors: { general: ["Could not register user"] },
+      value: formValues,
     };
   }
 }
 
 type LoginState = {
   message?: string;
-  errors?: { email?: string[]; password?: string[] };
+  errors?: { email?: string[]; password?: string[]; overall?:string };
+  value?: {
+    email?: string;
+    password?: string;
+  };
 };
 
 export async function loginUser(
@@ -208,6 +226,8 @@ export async function loginUser(
 ): Promise<LoginState> {
   const email = formData.get("email")?.toString() || "";
   const password = formData.get("password")?.toString() || "";
+
+  const defaultValues={email:email,password:password}
 
   try {
     const res = await fetch(
@@ -222,8 +242,9 @@ export async function loginUser(
     if (!res.ok) {
       const err = await res.json();
       return {
-        message: err.message || "Invalid credentials",
-        errors: { email: ["Invalid email or password"] },
+        message: "Login Failed",
+        errors: { overall: err.message },
+        value:defaultValues,
       };
     }
 

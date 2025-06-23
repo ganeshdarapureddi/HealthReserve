@@ -20,7 +20,7 @@ export default function NavLinks() {
   const navLinksAdmin = [
     { name: 'Home', href: '/dashboard', icon: '/icons/home.svg' },
     { name: 'Admin Panel', href: '/dashboard/admin', icon: '/icons/admin.svg' },
-  ];
+  ];  
 
   const linksToRender = user?.userRole === 'admin' ? navLinksAdmin : navLinksUser;
 
@@ -39,7 +39,7 @@ export default function NavLinks() {
             }`} 
           >
             <Image src={link.icon} width={20} height={20} alt={link.name} />
-            <span>{link.name}</span>
+            <span>{link.name}</span>  
           </Link>
         );
       })}

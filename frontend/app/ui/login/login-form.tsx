@@ -50,11 +50,9 @@ export default function LoginForm() {
           type="email"
           name="email"
           id="email"
+          defaultValue={state.value?.email??""}
           className="border-2 border-purple-400 w-80 bg-purple-50 focus:ring-2 focus:ring-purple-700 focus:outline-none p-2 rounded"
         />
-        {state.errors?.email && (
-          <p className="text-red-500">{state.errors.email[0]}</p>
-        )}
       </div>
 
       {/* Password */}
@@ -64,6 +62,7 @@ export default function LoginForm() {
           type="password"
           name="password"
           id="password"
+          defaultValue={state.value?.password??""}
           className="border-2 border-purple-400 bg-purple-50 w-80 focus:ring-2 focus:ring-purple-700 focus:outline-none p-2 rounded"
         />
       </div>
@@ -92,6 +91,10 @@ export default function LoginForm() {
         {isPending && <p className="text-sm text-purple-700">Signing in with Google...</p>}
       
       </div>
+
+      {state.errors?.overall && (
+          <p className="text-red-500 text-center">{state.errors.overall}</p>
+        )}
 
       {/* Footer */}
       <p className="text-sm text-center text-gray-600">
