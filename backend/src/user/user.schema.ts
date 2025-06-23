@@ -12,22 +12,30 @@ export class User {
   email: string;
 
   @Prop({
-    required: true,
+    required: false,
     match: /^[6-9]\d{9}$/,
   })
   phone: string;
 
   @Prop({
-    required: true,
+    type: String,
+    default: null,
+    required: false,
     minlength: 6,
   })
-  password: string;
+  password: string | null;
 
   @Prop({
     default: 'user',
     enum: ['user', 'admin'],
   })
-  role: string;
+  role: string; 
+
+  @Prop({
+    default:"custom",
+    enum:["custom","google"],
+  })
+  provider:string
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

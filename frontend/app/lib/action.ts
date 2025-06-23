@@ -257,6 +257,39 @@ export async function loginUser(
   }
 }
 
+
+
+
+
+export async function googleLoginAction(formData: FormData) {
+  const token = formData.get('token');
+
+  if (!token) {
+    return { success: false, message: 'Google token is missing' };
+  }
+
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL!}/auth/google-login`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ token }),
+  });
+
+  const data = await res.json();
+
+  if (data?.access_token) {
+    (await cookies()).set('token', data.access_token, { httpOnly: true, path: '/' });
+    (await cookies()).set('userId', createToken(data.userId), { httpOnly: true, path: '/' });
+    (await cookies()).set('userRole', createToken(data.userRole), { httpOnly: true, path: '/' });
+
+    return { success: true, message: 'Google login successful' };
+  }
+
+  return { success: false, message: 'Invalid Google login' };
+}
+
+
+
+
 export async function logout() {
   // Deletes the userId cookie
 

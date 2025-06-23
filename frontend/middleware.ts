@@ -5,12 +5,14 @@ import { validateToken } from "./app/lib/auth";
 export function middleware(request: NextRequest) {
   const userIdToken = request.cookies.get("userId")?.value;
   const userRoleToken = request.cookies.get("userRole")?.value;
+  const token=request.cookies.get("token")?.value;
+  console.log("token at middleware:",token)
   const path = request.nextUrl.pathname;
 
   const userId = validateToken(userIdToken);
   const userRole = validateToken(userRoleToken);
   
-  if (!userId && path.startsWith("/dashboard")) {
+  if (!token && path.startsWith("/dashboard")) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
 

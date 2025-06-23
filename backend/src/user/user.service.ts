@@ -25,15 +25,19 @@ export class UserService {
 
   async create(createUserDto: CreateUserDto): Promise<UserDocument> {
     try {
-        const user = new this.userModel(createUserDto);
-        return await user.save();
-      } catch (err) {
-        if (err.code === 11000 && err.keyPattern?.email) {
-            throw new ConflictException('Email already exists');
-          }
-        throw new InternalServerErrorException('Failed to register user');
+      const user = new this.userModel(createUserDto);
+      return await user.save();
+    } catch (err) {
+      console.error('Create user error:', err);
+  
+      if (err.code === 11000 && err.keyPattern?.email) {
+        throw new ConflictException('Email already exists');
       }
+  
+      throw new InternalServerErrorException('Failed to register user');
+    }
   }
+  
 
   // async update(id: string, updateData: Partial<User>): Promise<User> {
   //   const updated = await this.userModel.findByIdAndUpdate(id, updateData, { new: true });
@@ -46,5 +50,11 @@ export class UserService {
   //   if (!result) throw new NotFoundException('User not found');
   //   return { message: 'User deleted successfully' };
   // }
+
+  async findByEmail(email: string): Promise<UserDocument | null> {
+    return this.userModel.findOne({ email }).exec();
+  }
+  
+
 
 }

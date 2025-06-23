@@ -25,18 +25,18 @@ export default function NavLinks() {
   const linksToRender = user?.userRole === 'admin' ? navLinksAdmin : navLinksUser;
 
   return (
-    <nav className="flex w-full flex-row md:flex-col  space-x-2 md:px-4 gap-5 md:space-x-2 md:space-y-2 mt-2">
+    <nav className="flex w-full flex-row md:flex-col  space-x-2 md:px-4 gap-5 md:space-x-2 md:space-y-1 mt-2">
       {linksToRender.map((link) => {
         const isActive = pathname === link.href;  
         return (
           <Link
             key={link.name}
             href={link.href}
-            className={`flex items-center   gap-6 px-6 py-2 rounded transition whitespace-nowrap ${
+            className={`flex items-center   gap-3 px-6 py-2 rounded transition whitespace-nowrap ${
               isActive
                 ? 'bg-purple-200 text-purple-700 font-semibold'
                 : 'text-gray-600 hover:bg-purple-100 hover:text-purple-700'
-            }`}
+            }`} 
           >
             <Image src={link.icon} width={20} height={20} alt={link.name} />
             <span>{link.name}</span>

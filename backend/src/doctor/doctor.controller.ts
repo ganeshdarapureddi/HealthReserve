@@ -16,7 +16,7 @@ export class DoctorController {
   async getAllDoctors(): Promise<Doctor[]> {
     return this.doctorService.findAll();
   }
-
+  
   @Patch(':id')
   @ApiBody({ type:UpdateSlotStatusDto  })
   async updateSlotStatus(

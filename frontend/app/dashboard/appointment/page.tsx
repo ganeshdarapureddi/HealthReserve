@@ -15,7 +15,6 @@ export default async function AppointmentsPage() {
           <p className='text-2xl font-serif'><strong>Doctor:</strong> {appointment.doctor?.name}</p>
           <p className='text-2xl font-serif'><strong>Specialization:</strong> {appointment.doctor?.specialization}</p>
           <p className='text-2xl font-serif'><strong>Slot:</strong> {appointment.slot}</p>
-        
         </div>
       ) : (
         <div className='flex flex-col items-center justify-center space-y-6'>
