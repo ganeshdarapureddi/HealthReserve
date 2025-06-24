@@ -51,7 +51,7 @@ export default function LoginForm() {
           name="email"
           id="email"
           defaultValue={state.value?.email??""}
-          className="border-2 border-purple-400 w-80 bg-purple-50 focus:ring-2 focus:ring-purple-700 focus:outline-none p-2 rounded"
+          className="border-2 border-purple-400 w-80 text-gray-800  bg-purple-50 focus:ring-2 focus:ring-purple-700 focus:outline-none p-2 rounded"
         />
       </div>
 
@@ -63,7 +63,7 @@ export default function LoginForm() {
           name="password"
           id="password"
           defaultValue={state.value?.password??""}
-          className="border-2 border-purple-400 bg-purple-50 w-80 focus:ring-2 focus:ring-purple-700 focus:outline-none p-2 rounded"
+          className="border-2 border-purple-400 text-gray-800 bg-purple-50 w-80 focus:ring-2 focus:ring-purple-700 focus:outline-none p-2 rounded"
         />
       </div>
 
@@ -84,7 +84,7 @@ export default function LoginForm() {
         <GoogleLogin
           onSuccess={handleGoogleLogin}
           onError={() => setGoogleError('Google login failed')}
-          useOneTap
+          useOneTap 
           use_fedcm_for_prompt={false}
         />
 

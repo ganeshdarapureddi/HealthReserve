@@ -6,7 +6,7 @@ export default function LoginPage() {
     <div
       className="flex min-h-screen justify-center items-center bg-cover bg-center"
       style={{ backgroundImage: "url('/login-image.jpg')",
-        backgroundPosition: '65% center',
+        backgroundPosition: '65% center'
        }}
     >
       <LoginForm />
