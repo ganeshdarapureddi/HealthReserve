@@ -5,7 +5,8 @@ import {
   getAppointments,
   getDoctors,
   getUsers,
-  getUserById
+  getUserById,
+  getAppointmentByUserId
 } from '@/app/lib/data';
 import { GetCookie } from '@/app/lib/cookieStore/getCookie';
 
@@ -37,8 +38,14 @@ export default async function DashboardPage() {
    
     totalUsers = users.length;
 
-    // admin can see all appointments
-    userAppointments = appointments.filter(a => a.user._id === userId).length;
+    
+  }
+  else{
+    const userAppointment=await getAppointmentByUserId(userId);
+    if(userAppointment){
+      userAppointments=1;
+    }
+
   }
 
 
