@@ -77,7 +77,7 @@ export default function AppointmentTable({ appointments }: Props) {
                             type="submit"
                             className="shadow-2xl px-3 py-1 rounded flex items-center space-x-2 group"
                           >
-                            <div className="transition-transform duration-200 group-hover:scale-125">
+                            <div className="transition-transform duration-300 group-hover:scale-125">
                               <NextImage
                                 src="/icons/delete-icon.svg"
                                 alt="Delete"

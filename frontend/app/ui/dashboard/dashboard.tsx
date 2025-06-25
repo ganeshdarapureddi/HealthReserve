@@ -1,4 +1,5 @@
 'use client';
+import { useEffect } from 'react';
 import ButtonLink from '../button/ButtonLink';
 
 interface Props {
@@ -18,9 +19,10 @@ export default function DashboardUI({
   totalDoctors,
   totalUsers
 }: Props) {
+
   return (
     <div className="p-8">
-      {/* Welcome Header */}
+    
       <h1 className="text-3xl font-semibold mb-6 text-center">
         Welcome{' '}
         <span className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-indigo-800">
@@ -28,22 +30,29 @@ export default function DashboardUI({
         </span>
       </h1>
 
-      {/* Info Cards */}
+  
       <div className="flex flex-wrap justify-center gap-6">
-        <div className="p-6 min-w-[280px] bg-gradient-to-br from-purple-700 to-indigo-800 text-white text-center rounded-xl shadow-lg">
-          Appointments: {role === 'admin' ? totalAppointments : userAppointments}
+        <div className="p-6 min-w-[280px] bg-gradient-to-br from-pink-500 to-purple-800 text-white text-center rounded-xl shadow-inner">
+          <h2 className="text-lg font-semibold tracking-wide">Appointments</h2>
+          <p className="text-3xl mt-2 font-bold">
+            {role === 'admin' ? totalAppointments : userAppointments}
+          </p>
         </div>
-        <div className="p-6 min-w-[280px] bg-gradient-to-br from-purple-700 to-indigo-800 text-white text-center rounded-xl shadow-lg">
-          Doctors: {totalDoctors}
+
+        <div className="p-6 min-w-[280px] bg-gradient-to-br from-pink-500 to-purple-800 text-white text-center rounded-xl shadow-inner">
+          <h2 className="text-lg font-semibold tracking-wide">Doctors</h2>
+          <p className="text-3xl mt-2 font-bold">{totalDoctors}</p>
         </div>
+
         {role === 'admin' && (
-          <div className="p-6 min-w-[280px] bg-gradient-to-br from-purple-700 to-indigo-800 text-white text-center rounded-xl shadow-lg">
-            Users: {totalUsers}
+          <div className="p-6 min-w-[280px] bg-gradient-to-br from-pink-500 to-purple-800 text-white text-center rounded-xl shadow-inner">
+            <h2 className="text-lg font-semibold tracking-wide">Users</h2>
+            <p className="text-3xl mt-2 font-bold">{totalUsers}</p>
           </div>
         )}
       </div>
 
-      {/* Action Buttons */}
+        {/* buttons */}
       <div className="flex flex-col sm:flex-row gap-4 justify-center mt-10">
         {role === 'admin' ? (
           <ButtonLink route={"dashboard/admin"}>Manage Appointments</ButtonLink>

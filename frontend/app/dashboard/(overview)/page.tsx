@@ -42,13 +42,12 @@ export default async function DashboardPage() {
   }
   else{
     const userAppointment=await getAppointmentByUserId(userId);
-    if(userAppointment){
+    const res=await userAppointment.json();
+    console.log("userAppointments from dashboard page",res)
+    if(res.length!==0){
       userAppointments=1;
     }
-
   }
-
-
 
   return (
     <DashboardUI
@@ -57,7 +56,8 @@ export default async function DashboardPage() {
       totalAppointments={totalAppointments}
       userAppointments={userAppointments}
       totalDoctors={totalDoctors}
-      totalUsers={totalUsers}
+      totalUsers={totalUsers}  
     />
+
   );
 }

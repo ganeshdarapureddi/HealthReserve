@@ -13,7 +13,9 @@ export async function getDoctors(): Promise<Doctor[]> {
     headers: {
       "Content-Type": "application/json",
       "Authorization": `Bearer ${token}`,
+      
     },
+    cache: 'force-cache', 
   }
   );
   if (!res.ok) throw new Error('Failed to fetch doctors');  

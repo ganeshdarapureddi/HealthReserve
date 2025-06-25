@@ -25,7 +25,7 @@ export default function NavLinks() {
   const linksToRender = user?.userRole === 'admin' ? navLinksAdmin : navLinksUser;
 
   return (
-    <nav className="flex w-full flex-row md:flex-col  space-x-2 md:px-4 gap-5 md:space-x-2 md:space-y-1 mt-2">
+    <nav className="flex w-full flex-row md:flex-col  space-x-2 md:px-4 gap-3 md:space-x-2 md:space-y-1 mt-2">
       {linksToRender.map((link) => {
         const isActive = pathname === link.href;  
         return (

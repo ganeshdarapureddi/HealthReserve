@@ -2,6 +2,7 @@ import SideNav from '@/app/ui/dashboard/sidenav';
 import { cookies } from 'next/headers';
 import { validateToken } from '../lib/auth';
 
+
 export const experimental_ppr = true;
 
 export default async function Layout({ children }: { children: React.ReactNode }) {
@@ -22,6 +23,8 @@ export default async function Layout({ children }: { children: React.ReactNode }
       <div className="flex-grow overflow-y-auto p-6 bg-white">
         {children}
       </div>
+
+
     </div>
   );
 }

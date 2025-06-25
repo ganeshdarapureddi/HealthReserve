@@ -2,11 +2,13 @@
 
 import { useActionState } from 'react';
 import { loginUser } from '@/app/lib/action';
-import { useEffect, useTransition, useState } from 'react';
+import { useEffect, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { GoogleLogin } from '@react-oauth/google';
 import { googleLoginAction } from '@/app/lib/action';
+
+
 
 const initialState = { message: undefined, errors: {} };
 
@@ -15,7 +17,7 @@ export default function LoginForm() {
   const [state, formAction] = useActionState(loginUser, initialState);
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
-  const [googleError, setGoogleError] = useState<string | null>(null);
+  // const [googleError, setGoogleError] = useState<string | null>(null);
 
   useEffect(() => {
     if (state.message === 'Login successful') {
@@ -23,8 +25,8 @@ export default function LoginForm() {
     }
   }, [state, router]);
 
-  const handleGoogleLogin = async (credentialResponse: any) => {
-    setGoogleError(null);
+  const handleGoogleLogin = async (credentialResponse: any ) => {
+    // setGoogleError(null);
 
     const formData = new FormData();
     formData.append('token', credentialResponse.credential);
@@ -33,9 +35,10 @@ export default function LoginForm() {
       const result = await googleLoginAction(formData);
       if (result.success) {
         router.push('/dashboard');
-      } else {
-        setGoogleError(result.message);
       }
+      // } else {
+      //   setGoogleError(result.message);
+      // }
     });
   };
 
@@ -83,7 +86,7 @@ export default function LoginForm() {
       <div className="flex flex-col items-center space-y-3">
         <GoogleLogin
           onSuccess={handleGoogleLogin}
-          onError={() => setGoogleError('Google login failed')}
+          // onError={() => setGoogleError('Google login failed')}
           useOneTap 
           use_fedcm_for_prompt={false}
         />
