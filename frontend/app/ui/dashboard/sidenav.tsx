@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import NavLinks from './navLinks';
+import NavLinks from './navlinks';
 import { logout } from '@/app/lib/action';
 import { UserContext } from '@/app/context';
 

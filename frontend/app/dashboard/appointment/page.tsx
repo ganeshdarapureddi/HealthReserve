@@ -3,8 +3,7 @@ import { getUserAppointment } from '@/app/lib/action';
 
 export default async function AppointmentsPage() {
   const appointment = await getUserAppointment();
-
-
+  
   return (
     <main className="flex min-h-screen justify-center items-center ">
       
