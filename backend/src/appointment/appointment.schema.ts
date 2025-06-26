@@ -15,6 +15,9 @@ export class Appointment {
 
   @Prop({ type: Types.ObjectId, ref: 'User', required: true })
   user: User
+  
+  @Prop({required:true})
+  date:string
 
   @Prop({ required: true })
   slot: string;

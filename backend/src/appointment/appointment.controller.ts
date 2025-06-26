@@ -32,9 +32,9 @@ export class AppointmentController {
   async createAppointment(@Body() createAppointmentDto: CreateAppointmentDto) {
 
     console.log('Received appointment DTO:', createAppointmentDto); 
-    const { patientName, user,doctor, slot } = createAppointmentDto;
+    const { patientName, user,doctor,date, slot } = createAppointmentDto;
 
-    const appointment=await this.appointmentService.create({patientName,doctor,user,slot}) 
+    const appointment=await this.appointmentService.create({patientName,doctor,user,date,slot}) 
          
     return appointment.toObject();
   }

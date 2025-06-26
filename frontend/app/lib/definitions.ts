@@ -39,6 +39,7 @@
     patientName: string;
     doctor: Doctor;
     user: User;
+    date:string;
     slot: string;
   }
   

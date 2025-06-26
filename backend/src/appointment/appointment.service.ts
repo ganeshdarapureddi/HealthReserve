@@ -27,6 +27,7 @@ export class AppointmentService {
       patientName: createAppointmentDto.patientName,
       doctor: createAppointmentDto.doctor,
       user: createAppointmentDto.user,
+      date:createAppointmentDto.date,
       slot: createAppointmentDto.slot,
     });
     appointment.save();

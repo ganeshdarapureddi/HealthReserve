@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { validateToken } from "./app/lib/auth";
+import { Decrypt } from "./app/lib/auth";
 
 export function middleware(request: NextRequest) {
   const userIdToken = request.cookies.get("userId")?.value;
@@ -9,8 +9,8 @@ export function middleware(request: NextRequest) {
   console.log("token at middleware:",token)
   const path = request.nextUrl.pathname;
 
-  const userId = validateToken(userIdToken);
-  const userRole = validateToken(userRoleToken);
+  const userId = Decrypt(userIdToken);
+  const userRole = Decrypt(userRoleToken);
   
   if (!token && path.startsWith("/dashboard")) {
     return NextResponse.redirect(new URL("/login", request.url));

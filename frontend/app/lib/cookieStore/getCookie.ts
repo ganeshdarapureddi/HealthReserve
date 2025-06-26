@@ -1,13 +1,13 @@
  "use server"
 import { cookies } from 'next/headers';
 
-import { validateToken } from '../auth';
+import { Decrypt } from '../auth';
 
 export async function GetCookie(key:string):Promise<string|null>{
 
     const userCookie = (await cookies()).get(key)?.value;
   
-    const validatedCookie = validateToken(userCookie);
+    const validatedCookie = Decrypt(userCookie);
     return validatedCookie;
     
 }

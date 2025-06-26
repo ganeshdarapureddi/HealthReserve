@@ -51,6 +51,7 @@ export default function AppointmentTable({ appointments }: Props) {
                   <th className="px-4 py-3 text-left border-b">ID</th>
                   <th className="px-4 py-3 text-left border-b">Patient</th>
                   <th className="px-4 py-3 text-left border-b">Doctor</th>
+                  <th className="px-4 py-3 text-left border-b">Date</th>
                   <th className="px-4 py-3 text-left border-b">Slot</th>
                   <th className="px-4 py-3 text-left border-b">Action</th>
                 </tr>
@@ -69,6 +70,7 @@ export default function AppointmentTable({ appointments }: Props) {
                       <td className="px-4 py-3 border-b">{a._id}</td>
                       <td className="px-4 py-3 border-b">{a.patientName}</td>
                       <td className="px-4 py-3 border-b">{a.doctor.name}</td>
+                      <td className="px-4 py-3 border-b">{a.date}</td>
                       <td className="px-4 py-3 border-b">{a.slot}</td>
                       <td className="px-4 py-3 border-b">
                         <form action={formAction} className="inline">

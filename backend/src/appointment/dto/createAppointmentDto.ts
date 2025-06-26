@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiIAmATeapotResponse, ApiProperty } from '@nestjs/swagger';
 import { IsString } from 'class-validator';
 
 export class CreateAppointmentDto {
@@ -16,5 +16,11 @@ export class CreateAppointmentDto {
 
   @ApiProperty()
   @IsString()
+  date:string;
+
+  @ApiProperty()
+  @IsString()
   slot: string;
+
+
 }

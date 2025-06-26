@@ -3,7 +3,7 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { Appointment } from "./definitions";
-import { createToken, validateToken } from "./auth";
+import { Encrypt, Decrypt } from "./auth";
 import { deleteAppointmentApi, getAppointmentByUserId } from "./data";
 import GetTokenFromCookie, { GetCookie } from "./cookieStore/getCookie";
 
@@ -29,6 +29,7 @@ export async function bookAppointment(
 ): Promise<AppointmentState> {
   const patientName = formData.get("patientName")?.toString().trim();
   const doctorId = formData.get("doctorId")?.toString().trim();
+  const date=formData.get("date")?.toString().trim();
   const slot = formData.get("slot")?.toString().trim();
 
   const errors: AppointmentState["errors"] = {};
@@ -39,7 +40,7 @@ export async function bookAppointment(
   if (Object.keys(errors).length > 0) return { errors };
 
   const userId1 = (await cookies()).get("userId")?.value;
-  const userId = validateToken(userId1);
+  const userId = Decrypt(userId1);
   if (!userId) return { message: "User not logged in", errors: {} };
   // console.log({ patientName, doctor: doctorId, user: userId, slot })
 
@@ -56,8 +57,9 @@ export async function bookAppointment(
        },
       body: JSON.stringify({
         patientName,
-        doctor: doctorId?.toString(),
+        doctor: doctorId?.toString(), 
         user: userId.toString(),
+        date:date,
         slot: slot,
       }),
     }
@@ -258,12 +260,12 @@ export async function loginUser(
       path: "/",
     });
 
-    (await cookies()).set("userId", createToken(userId), {
+    (await cookies()).set("userId", Encrypt(userId), {
       httpOnly: true,
       path: "/",
     });
 
-    (await cookies()).set("userRole", createToken(userRole), {
+    (await cookies()).set("userRole", Encrypt(userRole), {
       httpOnly: true,
       path: "/",
     });
@@ -277,8 +279,6 @@ export async function loginUser(
     };
   }
 }
-
-
 
 
 
@@ -299,8 +299,8 @@ export async function googleLoginAction(formData: FormData) {
 
   if (data?.access_token) {
     (await cookies()).set('token', data.access_token, { httpOnly: true, path: '/' });
-    (await cookies()).set('userId', createToken(data.userId), { httpOnly: true, path: '/' });
-    (await cookies()).set('userRole', createToken(data.userRole), { httpOnly: true, path: '/' });
+    (await cookies()).set('userId', Encrypt(data.userId), { httpOnly: true, path: '/' });
+    (await cookies()).set('userRole', Encrypt(data.userRole), { httpOnly: true, path: '/' });
 
     return { success: true, message: 'Google login successful' };
   }

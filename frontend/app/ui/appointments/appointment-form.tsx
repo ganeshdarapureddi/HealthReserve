@@ -1,6 +1,6 @@
 'use client';
 
-import { useActionState, useState } from 'react';
+import { useActionState, useState, useEffect } from 'react';
 import { bookAppointment, AppointmentState } from '@/app/lib/action';
 
 interface AppointmentFormProps {
@@ -19,6 +19,18 @@ export default function AppointmentForm({ doctors }: AppointmentFormProps) {
   const [selectedSlot, setSelectedSlot] = useState(
     doctors[0].slots.find((s) => !s.booked) || doctors[0].slots[0]
   );
+
+  const [appointmentDate, setAppointmentDate] = useState('');
+
+  useEffect(() => {
+    const tomorrow = new Date();
+    console.log("Date of today",tomorrow)
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    const yyyy = tomorrow.getFullYear();
+    const mm = String(tomorrow.getMonth() + 1).padStart(2, '0');
+    const dd = String(tomorrow.getDate()).padStart(2, '0');
+    setAppointmentDate(`${dd}-${mm}-${yyyy}`);
+  }, []);
 
   const handleDoctorChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const doctor = doctors.find((doc) => doc._id === e.target.value);
@@ -49,7 +61,7 @@ export default function AppointmentForm({ doctors }: AppointmentFormProps) {
             placeholder='Patient Name'
             name="patientName"
             id="patientName"
-            className="w-full px-3 py-2 border border-gray-300  bg-white rounded-md text-base  focus:outline-none focus:ring-2 focus:ring-purple-400"
+            className="w-full px-3 py-2 border border-gray-300 bg-white rounded-md text-base focus:outline-none focus:ring-2 focus:ring-purple-400"
           />
           {state.errors?.patientName && (
             <p className="text-red-500 text-sm mt-1">{state.errors.patientName[0]}</p>
@@ -64,7 +76,7 @@ export default function AppointmentForm({ doctors }: AppointmentFormProps) {
           <select
             name="doctorId"
             id="doctorId"
-            className="w-full px-3 py-2 border border-gray-300  bg-white rounded-md text-base font-serif  focus:outline-none focus:ring-2 focus:ring-purple-400"
+            className="w-full px-3 py-2 border border-gray-300 bg-white rounded-md text-base font-serif focus:outline-none focus:ring-2 focus:ring-purple-400"
             onChange={handleDoctorChange}
             value={selectedDoctor._id}
           >
@@ -79,6 +91,21 @@ export default function AppointmentForm({ doctors }: AppointmentFormProps) {
           )}
         </div>
 
+        {/* Date - read-only */}
+        <div>
+          <label htmlFor="date" className="block text-md font-semibold text-gray-700 mb-1">
+            Appointment Date
+          </label>
+          <input
+            type="text"
+            id="date"
+            name="date"
+            value={appointmentDate}
+            readOnly
+            className="w-full px-3 py-2 border border-gray-300 bg-gray-100 rounded-md text-base focus:outline-none"
+          />
+        </div>
+
         {/* Slot */}
         <div>
           <label htmlFor="slot" className="block text-md font-semibold text-gray-700 mb-1">
@@ -87,7 +114,7 @@ export default function AppointmentForm({ doctors }: AppointmentFormProps) {
           <select
             name="slot"
             id="slot"
-            className="w-full px-3 py-2 border border-gray-300  bg-white rounded-md text-base   focus:outline-none focus:ring-2 focus:ring-purple-400"
+            className="w-full px-3 py-2 border border-gray-300 bg-white rounded-md text-base focus:outline-none focus:ring-2 focus:ring-purple-400"
             onChange={handleSlotChange}
             value={selectedSlot?.time}
           >

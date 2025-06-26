@@ -1,15 +1,15 @@
 import SideNav from '@/app/ui/dashboard/sidenav';
 import { cookies } from 'next/headers';
-import { validateToken } from '../lib/auth';
+import { Decrypt } from '../lib/auth';
 
 
-export const experimental_ppr = true;
+export const experimental_ppr = true; 
 
 export default async function Layout({ children }: { children: React.ReactNode }) {
   const userId1 = (await cookies()).get('userId')?.value;
-  const userId = validateToken(userId1);
+  const userId = Decrypt(userId1);
   const userRole1 = (await cookies()).get('userRole')?.value;
-  const userRole = validateToken(userRole1);
+  const userRole = Decrypt(userRole1);
   console.log("user at layout", userRole);
 
   return (
