@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { Decrypt } from "./app/lib/auth";
+import { Decrypt } from "./src/lib/auth";
 
 export function middleware(request: NextRequest) {
   const userIdToken = request.cookies.get("userId")?.value;
