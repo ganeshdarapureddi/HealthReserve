@@ -28,17 +28,16 @@ import { ConfigModule } from '@nestjs/config';
       { name: Appointment.name, schema: AppointmentSchema },
     ]),
     ConfigModule.forRoot({
-      isGlobal: true, // Optional: makes config available in all modules
-      envFilePath: '.env', // Optional: default is .env
+      isGlobal: true, 
+      envFilePath: '.env',
     }),
     PassportModule,
     JwtModule.register({
       secret: process.env.JWT_SECRET,
-      signOptions: { expiresIn: '1h' },
+      signOptions: { expiresIn: '2h' },
     }),
 
-
-  ],
+  ],  
   controllers: [
     UserController,
     AppointmentController,
