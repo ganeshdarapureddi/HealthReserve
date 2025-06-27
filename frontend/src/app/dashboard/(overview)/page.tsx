@@ -9,55 +9,65 @@ import {
   getAppointmentByUserId
 } from '@/lib/data';
 import { GetCookie } from '@/lib/cookieStore/getCookie';
+import { redirect } from 'next/navigation';
 
 export default async function DashboardPage() {
-  const userId = await GetCookie("userId");
-  const userRole = await GetCookie("userRole");
 
-  if (!userId) {
-    return <p>Unauthorized: No user ID found in cookies.</p>;
-  }
+  try {
 
-  const [user,doctors] = await Promise.all([getUserById(userId),getDoctors()])
+    const userId = await GetCookie("userId");
+    const userRole = await GetCookie("userRole");
 
-  let totalAppointments = 0;
-  let userAppointments = 0;
-  let totalDoctors = 0;
-  let totalUsers = 0;
-  
-  totalDoctors = doctors.length;
 
-  if (userRole === 'admin') {
-    const [appointments, users] = await Promise.all([
-      getAppointments(),
-      getUsers(),
-      
-    ]);
+    const [user, doctors] = await Promise.all([getUserById(userId), getDoctors()])
 
-    totalAppointments = appointments.length;
-   
-    totalUsers = users.length;
+    let totalAppointments = 0;
+    let userAppointments = 0;
+    let totalDoctors = 0;
+    let totalUsers = 0;
 
-    
-  }
-  else{
-    const userAppointment=await getAppointmentByUserId(userId);
-    const res=await userAppointment.json();
-    console.log("userAppointments from dashboard page",res)
-    if(res.length!==0){
-      userAppointments=1;
+    totalDoctors = doctors.length;
+
+    if (userRole === 'admin') {
+      const [appointments, users] = await Promise.all([
+        getAppointments(),
+        getUsers(),
+
+      ]);
+
+      totalAppointments = appointments.length;
+
+      totalUsers = users.length;
+
+
     }
+    else {
+      const userAppointment = await getAppointmentByUserId(userId);
+      const res = await userAppointment.json();
+      console.log("userAppointments from dashboard page", res)
+      if (res.length !== 0) {
+        userAppointments = 1;
+      }
+    }
+
+    return (
+      <DashboardUI
+        role={user.role || ''}
+        name={user?.name || ''}
+        totalAppointments={totalAppointments}
+        userAppointments={userAppointments}
+        totalDoctors={totalDoctors}
+        totalUsers={totalUsers}
+      />
+
+    );
   }
 
-  return (
-    <DashboardUI
-      role={user.role || ''}
-      name={user?.name || ''}
-      totalAppointments={totalAppointments}
-      userAppointments={userAppointments}
-      totalDoctors={totalDoctors}
-      totalUsers={totalUsers}  
-    />
+  catch (err: any) {
+    if (err.message === "unauthorized") {
+      redirect("/api/logout");
+    }
+    throw err;
+  }
 
-  );
 }

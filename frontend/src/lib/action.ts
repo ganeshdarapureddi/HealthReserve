@@ -65,6 +65,12 @@ export async function bookAppointment(
     }
   );
 
+  if (res.status === 401) {
+    console.log("Token expired or unauthorized");
+    redirect("/api/logout");
+  }
+
+
   if (!res.ok) {
     const data = await res.json();
     return {
@@ -88,6 +94,7 @@ export async function bookAppointment(
       }),
     }
   );
+  
   if (!slotUpdates.ok) {
     const error = await slotUpdates.text();
     console.error("Failed to update slot:", error);
@@ -101,9 +108,9 @@ export async function bookAppointment(
 
 //for getting data to the appointment dashboard
 export async function getUserAppointment(): Promise<IAppointment | null> {
-  const userId = await GetCookie("userId");
-
+  
   try {
+    const userId = await GetCookie("userId");
     const res = await getAppointmentByUserId(userId);
 
     if (!res.ok) {
@@ -115,8 +122,11 @@ export async function getUserAppointment(): Promise<IAppointment | null> {
     // console.log("Fetched appointment:", data);
 
     return data?.[0] || null;
-  } catch (error) {
+  } catch (error:any) {
     console.error("Failed to fetch appointment:", error);
+    if (error.message === "unauthorized") {
+      redirect("/api/logout");
+    }
     return null;
   }
 }
