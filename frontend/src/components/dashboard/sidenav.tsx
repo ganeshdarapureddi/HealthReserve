@@ -12,10 +12,10 @@ interface Props {
 
 export default function SideNav(props: Props) {
   return (
-    <aside className="w-full  md:w-[280px]  md:border-b-0 md:border-r-2 border-gray-200">
+    <aside className="w-full  md:w-[280px] md:h-full  md:border-b-0 md:border-r-2 border-gray-200">
       <div className="flex flex-row items-center md:flex-col md:items-center h-full md:h-screen overflow-y-auto">
         {/* Logo */}  
-        <div className="p-4 flex items-center gap-2 mr-10 md:mr-1">
+        <div className=" border-b-2 border-gray-300 p-4 flex items-center gap-2 mr-10 md:mr-1">
           <Image src="/logo.jpg" width={40} height={40} alt="Health Reserve logo" />
           <span className="text-lg md:text-2xl font-bold font-sans ">Health Reserve</span>
         </div>

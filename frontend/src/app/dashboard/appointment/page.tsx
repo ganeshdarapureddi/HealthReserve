@@ -11,7 +11,7 @@ export default async function AppointmentsPage() {
       <main className="flex min-h-screen justify-center items-center ">
 
         {appointment ? (
-          <div className="border-none p-25  rounded-2xl shadow-2xl bg-gradient-to-br from-purple-600 to-pink-700 max-w-xl mx-auto ">
+          <div className="border-none p-25 rounded-2xl shadow-2xl bg-gradient-to-br from-purple-600 to-pink-700 max-w-2xl mx-auto ">
             <h1 className="text-center text-4xl text-white mb-8 font-bold">Your Appointment</h1>
 
             <table className="text-white text-2xl font-serif">
@@ -30,7 +30,7 @@ export default async function AppointmentsPage() {
                 </tr>
                 <tr className="border-b border-white/30">
                   <td className="py-2 pr-4 font-bold">Date</td>
-                  <td className="py-2">:  {appointment.date}</td>
+                  <td className="py-2">: {appointment.date}</td>
                 </tr>
                 <tr>
                   <td className="py-2 pr-4 font-bold">Slot</td>
