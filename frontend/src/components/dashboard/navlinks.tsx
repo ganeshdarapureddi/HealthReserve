@@ -4,6 +4,7 @@ import { usePathname } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useUser } from '@/app/context';
+import { Role } from '@/enums/role';
 
 export default function NavLinks() {
   const pathname = usePathname();
@@ -20,14 +21,14 @@ export default function NavLinks() {
   const navLinksAdmin = [
     { name: 'Home', href: '/dashboard', icon: '/icons/home.svg' },
     { name: 'Admin Panel', href: '/dashboard/admin', icon: '/icons/admin.svg' },
-  ];  
+  ];
 
-  const linksToRender = user?.userRole === 'admin' ? navLinksAdmin : navLinksUser;
+  const linksToRender = user?.userRole === Role.Admin ? navLinksAdmin : navLinksUser;
 
   return (
     <nav className="flex w-full flex-row md:flex-col  space-x-2 md:px-4 gap-3 md:space-x-2 md:space-y-1 mt-2">
       {linksToRender.map((link) => {
-        const isActive = pathname === link.href;  
+        const isActive = pathname === link.href;
         return (
           <Link
             key={link.name}
@@ -39,7 +40,7 @@ export default function NavLinks() {
             }`} 
           >
             <Image src={link.icon} width={20} height={20} alt={link.name} />
-            <span>{link.name}</span>  
+            <span>{link.name}</span>
           </Link>
         );
       })}

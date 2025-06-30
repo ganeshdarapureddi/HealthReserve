@@ -1,20 +1,16 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { Decrypt } from "./src/lib/auth";
+import { Role } from "@/enums/role";
 
 export function middleware(request: NextRequest,response:NextResponse) {
   // const userIdToken = request.cookies.get("userId")?.value;
   const userRoleToken = request.cookies.get("userRole")?.value;
   const token=request.cookies.get("token")?.value;
 
-  console.log("token at middleware:",token);
+  // console.log("token at middleware:",token);
   const path = request.nextUrl.pathname;
 
-  if (response.status === 401) {
-    console.log("Token expired or unauthorized");
-    throw new Error("unauthorized");
-  }
-  
   // const userId = Decrypt(userIdToken);
   const userRole = Decrypt(userRoleToken);
 
@@ -27,7 +23,7 @@ export function middleware(request: NextRequest,response:NextResponse) {
   }
 
   if (userRole) {
-    if (userRole === "admin") {
+    if (userRole === Role.Admin) {
       const isAllowed =
         path === "/dashboard" || path.startsWith("/dashboard/admin");
       if (!isAllowed) {

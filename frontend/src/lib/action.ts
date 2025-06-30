@@ -141,6 +141,7 @@ export type RegisterState = {
     password?: string;
     confirmPassword?: string;
   };
+  success?: boolean,
 };
 
 
@@ -210,10 +211,11 @@ export async function registerUser(
         message: "Registration failed",
         errors: backendErrors,
         value: formValues,
+        
       };
     }
-
-    return { message: "Registration successful!", errors: {} };
+    return { message: "Registration successful!",success:true };
+    
   } catch {
     return {
       message: "Server error",
