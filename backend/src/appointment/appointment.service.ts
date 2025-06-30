@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Appointment, AppointmentDocument } from './appointment.schema';
 import { Model } from 'mongoose';
 import { CreateAppointmentDto } from './dto/createAppointmentDto';
+import { AppointmentStatus } from './enums/appointmentStatus';
 
 
 @Injectable()
@@ -50,8 +51,19 @@ export class AppointmentService {
       .populate('user')
       .populate('doctor')
       .exec();
-
     return appointments;
+  }
+
+
+  async updateStatus(id: string, status: AppointmentStatus): Promise<AppointmentDocument> {
+    const updated = await this.appointmentModel.findByIdAndUpdate(
+      id,
+     {status},
+    );
+    if (!updated) {
+      throw new NotFoundException(`Appointment with id ${id} not found`);
+    }
+    return (await updated.populate('doctor')).populate('user');
   }
 
   // async findById(id: string): Promise<Appointment> {

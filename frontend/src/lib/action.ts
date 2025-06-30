@@ -2,9 +2,9 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
-import {IAppointment } from "./modals";
+import {IAppointment } from "./models";
 import { Encrypt, Decrypt } from "./auth";
-import { deleteAppointmentApi, getAppointmentByUserId } from "./data";
+import { deleteAppointmentApi, getAppointmentByUserId, UpdateAppointmentStatusApi } from "./data";
 import GetTokenFromCookie, { GetCookie } from "./cookieStore/getCookie";
 
 export type AppointmentFormData = {
@@ -383,4 +383,62 @@ export async function deleteAppointment(
 
   revalidatePath("/dashboard/admin");
   return { message: "Appointment removed successfully" };
+}
+
+
+interface UpdateState {
+  message?: string;
+  error?: string;
+}
+
+export async function updateAppointmentStatus(
+  prevState: any,
+  formData: FormData
+): Promise<UpdateState> {
+  const id = formData.get("id")?.toString();
+  const status = formData.get("status")?.toString();
+
+  if (!id || !status) {
+    return { error: "Invalid request" };
+  }
+
+  try {
+
+    const res = await UpdateAppointmentStatusApi(id, status);
+
+    if (!res.ok) {
+      const err = await res.json();
+      return {
+        error: err.message || "Unable to update appointment status",
+      };
+    }
+
+    const data = await res.json();
+    console.log("this is from the admin panel",data.doctor._id);
+    console.log("this is from the admin panel",data.slot);
+
+    
+    if (status === "completed" && data?.doctor?._id && data?.slot) {
+      const token = await GetTokenFromCookie("token");
+
+      await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/doctors/${data.doctor._id}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          slot: data.slot,
+          status: false,
+        }),
+      });
+    }
+
+    revalidatePath("/dashboard/admin");
+
+    return { message: "Status updated successfully" };
+  } catch (e) {
+    console.error("Status update failed:", e);
+    return { error: "Failed to update status" };
+  }
 }

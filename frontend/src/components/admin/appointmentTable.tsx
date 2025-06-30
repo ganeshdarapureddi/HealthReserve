@@ -1,8 +1,13 @@
 'use client';
 
-import { useActionState, useEffect, useState } from 'react';
-import { deleteAppointment } from '@/lib/action';
-import { IAppointment } from '@/lib/modals';
+import {
+  useActionState,
+  useEffect,
+  useState,
+  useTransition,
+} from 'react';
+import { deleteAppointment, updateAppointmentStatus } from '@/lib/action';
+import { IAppointment } from '@/lib/models';
 import NextImage from 'next/image';
 
 interface Props {
@@ -11,39 +16,54 @@ interface Props {
 
 export default function AppointmentTable({ appointments }: Props) {
   const initialState = { message: undefined, error: undefined };
-  const [state, formAction] = useActionState(deleteAppointment, initialState);
 
-  const [input, setInput] = useState("");
+  const [deleteState, deleteFormAction] = useActionState(deleteAppointment, initialState);
+  const [updateState, updateFormAction] = useActionState(updateAppointmentStatus, initialState);
 
-  const [debouncedInput, setDebouncedInput] = useState("");
+  const [input, setInput] = useState('');
+  const [debouncedInput, setDebouncedInput] = useState('');
+  const [localAppointments, setLocalAppointments] = useState<IAppointment[]>(appointments);
 
+  // React Transition state for async action
+  const [isPending, startTransition] = useTransition();
+
+  // Debounce search
   useEffect(() => {
     const handler = setTimeout(() => {
       setDebouncedInput(input);
     }, 1000);
-
-    return () => {
-      clearTimeout(handler);
-    };
+    return () => clearTimeout(handler);
   }, [input]);
+
+  const handleStatusChange = (id: string, status: string) => {
+   
+    setLocalAppointments((prev) =>
+      prev.map((a) => (a._id === id ? { ...a, status } : a))
+    );
+
+    const formData = new FormData();
+    formData.append('id', id);
+    formData.append('status', status);
+
+    startTransition(() => {
+      updateFormAction(formData);
+    });
+  };
 
   return (
     <div className="p-6 bg-gray-50 rounded-lg shadow-md">
-      {appointments.length === 0 ? (
+      {localAppointments.length === 0 ? (
         <p className="text-center text-lg text-gray-600">No appointments available.</p>
       ) : (
         <div>
-          <div>
-            <input
-              type="text"
-              placeholder="Search..."
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              className="border bg-white p-2 rounded w-full focus:ring-2  focus:ring-purple-700 focus:outline-none"
-            />
-          </div>
-          <br />
-
+          <input
+            type="text"
+            placeholder="Search..."
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            className="border bg-white p-2 rounded w-full focus:ring-2 focus:ring-purple-700 focus:outline-none mb-3"
+          />
+      
           <div className="overflow-x-auto">
             <table className="min-w-full border border-gray-200 rounded-xl">
               <thead>
@@ -53,11 +73,12 @@ export default function AppointmentTable({ appointments }: Props) {
                   <th className="px-4 py-3 text-left border-b">Doctor</th>
                   <th className="px-4 py-3 text-left border-b">Date</th>
                   <th className="px-4 py-3 text-left border-b">Slot</th>
+                  <th className="px-4 py-3 text-left border-b">Status</th>
                   <th className="px-4 py-3 text-left border-b">Action</th>
                 </tr>
               </thead>
               <tbody>
-                {appointments
+                {localAppointments
                   .filter((a) =>
                     a.patientName.toLowerCase().includes(debouncedInput.toLowerCase()) ||
                     a.doctor.name.toLowerCase().includes(debouncedInput.toLowerCase())
@@ -73,7 +94,19 @@ export default function AppointmentTable({ appointments }: Props) {
                       <td className="px-4 py-3 border-b">{a.date}</td>
                       <td className="px-4 py-3 border-b">{a.slot}</td>
                       <td className="px-4 py-3 border-b">
-                        <form action={formAction} className="inline">
+                        <select
+                          name="status"
+                          value={a.status}
+                          onChange={(e) => handleStatusChange(a._id, e.target.value)}
+                          className="border p-1 rounded text-sm bg-white"
+                          disabled={isPending || a.status === 'completed'}
+                        >
+                          <option value="pending">Pending</option>
+                          <option value="completed">Completed</option>
+                        </select>
+                      </td>
+                      <td className="px-4 py-3 border-b">
+                        <form action={deleteFormAction} className="inline">
                           <input type="hidden" name="id" value={a._id} />
                           <button
                             type="submit"
@@ -98,8 +131,15 @@ export default function AppointmentTable({ appointments }: Props) {
         </div>
       )}
 
-      {state.error && (
-        <p className="text-red-600 text-sm mt-4 text-center">{state.error}</p>
+      {/* Show error and success messages */}
+      {deleteState.error && (
+        <p className="text-red-600 text-sm mt-4 text-center">{deleteState.error}</p>
+      )}
+      {updateState.error && (
+        <p className="text-red-600 text-sm mt-2 text-center">{updateState.error}</p>
+      )}
+      {updateState.message && (
+        <p className="text-green-600 text-sm mt-2 text-center">{updateState.message}</p>
       )}
     </div>
   );

@@ -1,7 +1,8 @@
 // app/lib/data.ts
 "use server";
+import { revalidatePath } from "next/cache";
 import GetTokenFromCookie from "./cookieStore/getCookie";
-import { IDoctor, IUser, IAppointment } from "./modals";
+import { IDoctor, IUser, IAppointment } from "./models";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL!;
 
@@ -33,6 +34,7 @@ export async function getUsers(): Promise<IUser[]> {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     },
+  
   });
   if (res.status === 401) {
     console.log("Token expired or unauthorized");
@@ -112,6 +114,29 @@ export async function deleteAppointmentApi(
     console.log("Token expired or unauthorized");
     throw new Error("unauthorized");
   }
+
+  return res;
+}
+
+
+export async function UpdateAppointmentStatusApi(
+  appointmentId: string,
+  status:string
+): Promise<Response> {
+  const token = await GetTokenFromCookie("token");
+  const res = await fetch(`${BASE_URL}/appointments/update/${appointmentId}`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ status }),
+  });
+  if (res.status === 401) {
+    console.log("Token expired or unauthorized");
+    throw new Error("unauthorized");
+  }
+  revalidatePath("/dashboard/admin")
 
   return res;
 }

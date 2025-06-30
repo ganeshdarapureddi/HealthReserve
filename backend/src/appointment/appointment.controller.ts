@@ -1,5 +1,5 @@
 // src/appointments/appointments.controller.ts
-import { Body, Controller, Delete, Get, Param, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards } from '@nestjs/common';
 import { AppointmentService } from './appointment.service';
 import {  AppointmentDocument } from './appointment.schema';
 import { CreateAppointmentDto } from './dto/createAppointmentDto';
@@ -7,6 +7,7 @@ import { JwtAuthGuard } from 'src/guards/jwt-auth.guard';
 import { ApiBearerAuth } from '@nestjs/swagger';
 import { RolesGuard } from 'src/guards/roles.guard';
 import { Roles } from 'src/decorators/roles.decorator';
+import { UpdateStatusDto } from './dto/updateStatusDto';
 
 @ApiBearerAuth('jwt-auth')//should be added to get the authorize button at top 
 @UseGuards(JwtAuthGuard)
@@ -46,5 +47,14 @@ export class AppointmentController {
   async delete(@Param('id') id: string):Promise<AppointmentDocument> {
     const deleted= await this.appointmentService.delete(id);
     return deleted;
+  }
+
+  
+  @Roles('admin')
+  @UseGuards(RolesGuard)
+  @Patch('update/:id')
+  async updateStatus(@Param('id') id: string,@Body() updateStatusDto:UpdateStatusDto):Promise<AppointmentDocument> {
+    const updated= await this.appointmentService.updateStatus(id,updateStatusDto.status);
+    return updated;
   }
 } 

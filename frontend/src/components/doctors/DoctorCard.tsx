@@ -2,7 +2,7 @@
 
 import React from 'react';
 
-import { Doctor } from '@/lib/modals';
+import { Doctor } from '@/lib/models';
 
 interface Props{
   doctor:Doctor

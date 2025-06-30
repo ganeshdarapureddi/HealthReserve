@@ -39,4 +39,5 @@ export interface IAppointment {
   user: IUser;
   date: string;
   slot: string;
+  status:string;
 }
