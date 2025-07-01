@@ -6,11 +6,13 @@ export default async function AppointmentsPage() {
   try {
 
     const appointment = await getUserAppointment();
+    const pendingAppointment = appointment?.find(a => a.status === 'pending');
+    // console.log("appointment from the display page",appointment)
 
     return (
       <main className="flex min-h-screen justify-center items-center ">
 
-        {appointment ? (
+        {pendingAppointment ? (
           <div className="border-none p-25 rounded-2xl shadow-2xl bg-gradient-to-br from-purple-600 to-pink-700 max-w-2xl mx-auto ">
             <h1 className="text-center text-4xl text-white mb-8 font-bold">Your Appointment</h1>
 
@@ -18,30 +20,30 @@ export default async function AppointmentsPage() {
               <tbody>
                 <tr className="border-b border-white/30">
                   <td className="py-2 pr-4 font-bold">Patient Name</td>
-                  <td className="py-2">:  {appointment.patientName}</td>
+                  <td className="py-2">:  {pendingAppointment.patientName}</td>
                 </tr>
                 <tr className="border-b border-white/30">
                   <td className="py-2 pr-4 font-bold">Doctor</td>
-                  <td className="py-2">:  {appointment.doctor?.name}</td>
+                  <td className="py-2">:  {pendingAppointment.doctor?.name}</td>
                 </tr>
                 <tr className="border-b border-white/30">
                   <td className="py-2 pr-4 font-bold">Specialization</td>
-                  <td className="py-2">:  {appointment.doctor?.specialization}</td>
+                  <td className="py-2">:  {pendingAppointment.doctor?.specialization}</td>
                 </tr>
                 <tr className="border-b border-white/30">
                   <td className="py-2 pr-4 font-bold">Date</td>
-                  <td className="py-2">: {appointment.date}</td>
+                  <td className="py-2">: {pendingAppointment.date}</td>
                 </tr>
                 <tr>
                   <td className="py-2 pr-4 font-bold">Slot</td>
-                  <td className="py-2 ">:  {appointment.slot}</td>
+                  <td className="py-2 ">:  {pendingAppointment.slot}</td>
                 </tr>
               </tbody>
             </table>
           </div>
         ) : (
           <div className='flex flex-col items-center justify-center space-y-6'>
-            <p className='border-none p-15 space-y-4 rounded-2xl shadow-2xl bg-gradient-to-r from-purple-300 to-purple-50 font-bold font-sans'>No appointment booked yet.</p>
+            <p className='border-none mb-15 p-15 space-y-4 rounded-2xl shadow-xl bg-gradient-to-r from-purple-300 to-purple-50 font-bold font-sans'>No appointment booked yet.</p>
             <Link href="/dashboard/appointment/book" className="px-6 py-3 text-white font-semibold rounded-lg bg-gradient-to-r from-purple-600 to-indigo-700 hover:from-purple-700 hover:to-indigo-800 text-center transition">
               Book Appointment
             </Link>

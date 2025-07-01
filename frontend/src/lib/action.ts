@@ -107,7 +107,7 @@ export async function bookAppointment(
 }
 
 //for getting data to the appointment dashboard
-export async function getUserAppointment(): Promise<IAppointment | null> {
+export async function getUserAppointment(): Promise<IAppointment[] | null> {
   
   try {
     const userId = await GetCookie("userId");
@@ -121,7 +121,7 @@ export async function getUserAppointment(): Promise<IAppointment | null> {
     const data = await res.json();
     // console.log("Fetched appointment:", data);
 
-    return data?.[0] || null;
+    return data || null;
   } catch (error:any) {
     console.error("Failed to fetch appointment:", error);
     if (error.message === "unauthorized") {
@@ -358,9 +358,9 @@ export async function deleteAppointment(
   }
 
   const data = await res.json();
-  console.log("Action after deletion:", data);
-  console.log("doctorID", data.doctor._id);
-  console.log("slots", data.slot);
+  // console.log("Action after deletion:", data);
+  // console.log("doctorID", data.doctor._id);
+  // console.log("slots", data.slot);
 
   const token=await GetTokenFromCookie("token");
   const slotUpdates = await fetch(
@@ -381,7 +381,6 @@ export async function deleteAppointment(
     console.error("Failed to update slot:", error);
   }
 
-  revalidatePath("/dashboard/admin");
   return { message: "Appointment removed successfully" };
 }
 
@@ -403,9 +402,7 @@ export async function updateAppointmentStatus(
   }
 
   try {
-
     const res = await UpdateAppointmentStatusApi(id, status);
-
     if (!res.ok) {
       const err = await res.json();
       return {
@@ -433,8 +430,6 @@ export async function updateAppointmentStatus(
         }),
       });
     }
-
-    revalidatePath("/dashboard/admin");
 
     return { message: "Status updated successfully" };
   } catch (e) {

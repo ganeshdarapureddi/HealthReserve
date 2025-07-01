@@ -30,6 +30,7 @@ export class AppointmentService {
       user: createAppointmentDto.user,
       date:createAppointmentDto.date,
       slot: createAppointmentDto.slot,
+      createdAt:new Date(),
     });
     appointment.save();
     return (await appointment.populate('user')).populate('doctor');
@@ -51,6 +52,7 @@ export class AppointmentService {
       .populate('user')
       .populate('doctor')
       .exec();
+      console.log("appointments from backend",appointments)
     return appointments;
   }
 

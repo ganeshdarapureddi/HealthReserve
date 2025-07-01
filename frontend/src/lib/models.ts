@@ -40,4 +40,5 @@ export interface IAppointment {
   date: string;
   slot: string;
   status:string;
+  createdAt:Date;
 }

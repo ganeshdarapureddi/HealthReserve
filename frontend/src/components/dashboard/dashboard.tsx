@@ -7,6 +7,7 @@ interface Props {
   name: string;
   totalAppointments: number;
   userAppointments: number;
+  pendingAppointments:number;
   totalDoctors: number;
   totalUsers: number;
 }
@@ -16,6 +17,7 @@ export default function DashboardUI({
   name,
   totalAppointments,
   userAppointments,
+  pendingAppointments,
   totalDoctors,
   totalUsers
 }: Props) {
@@ -33,10 +35,15 @@ export default function DashboardUI({
   
       <div className="flex flex-wrap justify-center gap-6">
         <div className="p-6 min-w-[280px] bg-gradient-to-br from-pink-500 to-purple-800 text-white text-center rounded-xl shadow-inner">
-          <h2 className="text-lg font-semibold tracking-wide">Appointments</h2>
+          <h2 className="text-lg font-semibold tracking-wide">Total Appointments</h2>
           <p className="text-3xl mt-2 font-bold">
             {role === 'admin' ? totalAppointments : userAppointments}
           </p>
+        </div>
+
+        <div className="p-6 min-w-[280px] bg-gradient-to-br from-pink-500 to-purple-800 text-white text-center rounded-xl shadow-inner">
+          <h2 className="text-lg font-semibold tracking-wide">Pending Appointments</h2>
+          <p className="text-3xl mt-2 font-bold">{pendingAppointments}</p>
         </div>
 
         <div className="p-6 min-w-[280px] bg-gradient-to-br from-pink-500 to-purple-800 text-white text-center rounded-xl shadow-inner">
@@ -58,7 +65,7 @@ export default function DashboardUI({
           <ButtonLink route={"dashboard/admin"}>Manage Appointments</ButtonLink>
         ) : (
           <>
-            {userAppointments !== 1 && (
+            {pendingAppointments !== 1 && (
               <ButtonLink route={"dashboard/appointment/book"}>Book Appointment</ButtonLink>
             )}
             <ButtonLink route={"dashboard/appointment"}>My Appointment</ButtonLink>

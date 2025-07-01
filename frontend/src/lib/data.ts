@@ -114,7 +114,6 @@ export async function deleteAppointmentApi(
     console.log("Token expired or unauthorized");
     throw new Error("unauthorized");
   }
-
   return res;
 }
 

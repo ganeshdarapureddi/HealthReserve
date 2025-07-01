@@ -30,6 +30,9 @@ export class Appointment {
     required: true,
   })
   status: AppointmentStatus;
+
+  @Prop({required:true})
+  createdAt:Date;
 }
 
 export const AppointmentSchema = SchemaFactory.createForClass(Appointment);

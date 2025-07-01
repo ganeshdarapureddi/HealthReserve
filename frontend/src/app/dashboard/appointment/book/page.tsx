@@ -18,5 +18,4 @@ export default async function AppointmentBookingPage() {
       redirect("/api/logout");
     }
   }
-
 }

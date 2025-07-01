@@ -22,12 +22,16 @@ export default function AppointmentTable({ appointments }: Props) {
 
   const [input, setInput] = useState('');
   const [debouncedInput, setDebouncedInput] = useState('');
-  const [localAppointments, setLocalAppointments] = useState<IAppointment[]>(appointments);
+  const [deletedId, setDeletedId] = useState<string | null>(null);
 
-  // React Transition state for async action
+  const [localAppointments, setLocalAppointments] = useState<IAppointment[]>(
+    [...appointments].sort(
+      (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    )
+  );
+
   const [isPending, startTransition] = useTransition();
 
-  // Debounce search
   useEffect(() => {
     const handler = setTimeout(() => {
       setDebouncedInput(input);
@@ -35,12 +39,17 @@ export default function AppointmentTable({ appointments }: Props) {
     return () => clearTimeout(handler);
   }, [input]);
 
+  useEffect(() => {
+    if (deleteState.message && deletedId) {
+      setLocalAppointments((prev) => prev.filter((a) => a._id !== deletedId));
+      setDeletedId(null);
+    }
+  }, [deleteState, deletedId]);
+
   const handleStatusChange = (id: string, status: string) => {
-   
     setLocalAppointments((prev) =>
       prev.map((a) => (a._id === id ? { ...a, status } : a))
     );
-
     const formData = new FormData();
     formData.append('id', id);
     formData.append('status', status);
@@ -63,7 +72,7 @@ export default function AppointmentTable({ appointments }: Props) {
             onChange={(e) => setInput(e.target.value)}
             className="border bg-white p-2 rounded w-full focus:ring-2 focus:ring-purple-700 focus:outline-none mb-3"
           />
-      
+
           <div className="overflow-x-auto">
             <table className="min-w-full border border-gray-200 rounded-xl">
               <thead>
@@ -106,7 +115,13 @@ export default function AppointmentTable({ appointments }: Props) {
                         </select>
                       </td>
                       <td className="px-4 py-3 border-b">
-                        <form action={deleteFormAction} className="inline">
+                        <form
+                          action={(formData) => {
+                            setDeletedId(a._id);
+                            deleteFormAction(formData);
+                          }}
+                          className="inline"
+                        >
                           <input type="hidden" name="id" value={a._id} />
                           <button
                             type="submit"
@@ -131,7 +146,6 @@ export default function AppointmentTable({ appointments }: Props) {
         </div>
       )}
 
-      {/* Show error and success messages */}
       {deleteState.error && (
         <p className="text-red-600 text-sm mt-4 text-center">{deleteState.error}</p>
       )}
