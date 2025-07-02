@@ -139,3 +139,32 @@ export async function UpdateAppointmentStatusApi(
 
   return res;
 }
+
+
+
+
+export async function getAppointmentByPagination(
+  currentPage: number,
+  itemsPerPage: number,
+  search: string = ''
+): Promise<{ data: IAppointment[]; totalPages: number }> {
+  const params = new URLSearchParams({
+    page: currentPage.toString(),
+    limit: itemsPerPage.toString(),
+    search: search,
+  });
+
+  const token = await GetTokenFromCookie("token");
+
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL!}/appointments/paginated?${params}`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (!res.ok) throw new Error('Failed to fetch');
+
+  return res.json(); // now you return directly parsed JSON
+}

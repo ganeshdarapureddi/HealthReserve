@@ -24,7 +24,6 @@ export class DoctorController {
     @Body() updateSlotStatusDto: UpdateSlotStatusDto
   ) {
     // console.log(updateSlotStatusDto)
-    const { slot, status } = updateSlotStatusDto;
     // console.log(updateSlotStatusDto.slot)
     // console.log(slot,status)
     return this.doctorService.updateSlotStatus(doctorId, updateSlotStatusDto.slot, updateSlotStatusDto.status);

@@ -6,52 +6,83 @@ import {
   useState,
   useTransition,
 } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { deleteAppointment, updateAppointmentStatus } from '@/lib/action';
 import { IAppointment } from '@/lib/models';
 import NextImage from 'next/image';
+import { getAppointmentByPagination } from '@/lib/data';
+import Pagination from './paginationButtons';
 
-interface Props {
-  appointments: IAppointment[];
-}
-
-export default function AppointmentTable({ appointments }: Props) {
+export default function AppointmentTable() {
   const initialState = { message: undefined, error: undefined };
   const [deleteState, deleteFormAction] = useActionState(deleteAppointment, initialState);
   const [updateState, updateFormAction] = useActionState(updateAppointmentStatus, initialState);
 
+  const [appointments, setAppointments] = useState<IAppointment[]>([]);
+  const [totalPages, setTotalPages] = useState(1);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
   const [input, setInput] = useState('');
   const [debouncedInput, setDebouncedInput] = useState('');
   const [deletedId, setDeletedId] = useState<string | null>(null);
-
-  const [localAppointments, setLocalAppointments] = useState<IAppointment[]>(
-    [...appointments].sort(
-      (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-    )
-  );
   const [isPending, startTransition] = useTransition();
 
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 2;
+  // Get query string values
+  const pageParam = parseInt(searchParams.get('page') || '1');
+  const limitParam = parseInt(searchParams.get('limit') || '3');
+  // const searchParam = searchParams.get('search') || '';
+
+  const [currentPage, setCurrentPage] = useState(pageParam);
+  const itemsPerPage = limitParam;
+
 
   useEffect(() => {
-    const handler = setTimeout(() => setDebouncedInput(input), 1000);
+    const handler = setTimeout(() => setDebouncedInput(input), 800);
     return () => clearTimeout(handler);
   }, [input]);
+  
 
+  // Update URL when page or search changes
+  useEffect(() => {
+    const params = new URLSearchParams();
+    params.set('page', currentPage.toString());
+    params.set('limit', itemsPerPage.toString());
+    if (debouncedInput.trim()) params.set('search', debouncedInput.trim());
+    router.replace(`?${params.toString()}`);
+  }, [currentPage, debouncedInput]);
+
+  // Fetch data
+  useEffect(() => {
+    const fetchAppointments = async () => {
+      setIsLoading(true);
+      try {
+        const result = await getAppointmentByPagination(currentPage, itemsPerPage, debouncedInput);
+        setAppointments(result.data);
+        setTotalPages(result.totalPages);
+      } catch (error) {
+        console.error('Error fetching appointments:', error);
+        setAppointments([]);
+        setTotalPages(1);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchAppointments();
+  }, [currentPage, debouncedInput]);
+
+  // Remove deleted appointment from local UI
   useEffect(() => {
     if (deleteState.message && deletedId) {
-      setLocalAppointments((prev) => prev.filter((a) => a._id !== deletedId));
+      setAppointments((prev) => prev.filter((a) => a._id !== deletedId));
       setDeletedId(null);
     }
   }, [deleteState, deletedId]);
 
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [debouncedInput]);
-
-
   const handleStatusChange = (id: string, status: string) => {
-    setLocalAppointments((prev) =>
+    setAppointments((prev) =>
       prev.map((a) => (a._id === id ? { ...a, status } : a))
     );
     const formData = new FormData();
@@ -60,47 +91,27 @@ export default function AppointmentTable({ appointments }: Props) {
     startTransition(() => updateFormAction(formData));
   };
 
-  const filteredAppointments = localAppointments.filter((a) =>
-    a.patientName.toLowerCase().includes(debouncedInput.toLowerCase()) ||
-    a.doctor.name.toLowerCase().includes(debouncedInput.toLowerCase())
-  );
-
-  const totalPages = Math.ceil(filteredAppointments.length / itemsPerPage);
-  const paginatedAppointments = filteredAppointments.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
-
-
-  const buttons = [];
-  for (let i = 1; i <= totalPages; i++) {
-    buttons.push(
-      <button
-        key={i}
-        onClick={() => setCurrentPage(i)}
-        className={`px-3 py-1 rounded ${currentPage === i ? 'bg-purple-600 text-white' : 'bg-purple-100'
-          }`}
-      >
-        {i}
-      </button>
-    );
-  }
-
+  const handleSearchInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setInput(e.target.value);
+    setCurrentPage(1);
+  };
 
   return (
     <div className="p-6 bg-gray-50 rounded-lg shadow-md">
-      {localAppointments.length === 0 ? (
+      <input
+        type="text"
+        placeholder="Search by patient or doctor..."
+        value={input}
+        onChange={handleSearchInput}
+        className="border bg-white p-2 rounded w-full focus:ring-2 focus:ring-purple-700 focus:outline-none mb-3"
+      />
+
+      {isLoading ? (
+        <p className="text-center text-gray-600">Loading appointments...</p>
+      ) : appointments.length === 0 ? (
         <p className="text-center text-lg text-gray-600">No appointments available.</p>
       ) : (
-        <div>
-          <input
-            type="text"
-            placeholder="Search..."
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            className="border bg-white p-2 rounded w-full focus:ring-2 focus:ring-purple-700 focus:outline-none mb-3"
-          />
-
+        <>
           <div className="overflow-x-auto">
             <table className="min-w-full border border-gray-200 rounded-xl">
               <thead>
@@ -115,7 +126,7 @@ export default function AppointmentTable({ appointments }: Props) {
                 </tr>
               </thead>
               <tbody>
-                {paginatedAppointments.map((a, index) => (
+                {appointments.map((a, index) => (
                   <tr
                     key={a._id}
                     className={index % 2 === 0 ? 'bg-white' : 'bg-purple-100 hover:bg-purple-200'}
@@ -141,7 +152,7 @@ export default function AppointmentTable({ appointments }: Props) {
                       <form
                         action={deleteFormAction}
                         className="inline"
-                        onSubmit={() => setDeletedId(a._id)} // Set the ID before submitting
+                        onSubmit={() => setDeletedId(a._id)}
                       >
                         <input type="hidden" name="id" value={a._id} />
                         <button
@@ -158,7 +169,6 @@ export default function AppointmentTable({ appointments }: Props) {
                           </div>
                         </button>
                       </form>
-
                     </td>
                   </tr>
                 ))}
@@ -166,28 +176,12 @@ export default function AppointmentTable({ appointments }: Props) {
             </table>
           </div>
 
-          <div className="flex justify-between space-x-2 mt-4">
-            <button
-              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-              disabled={currentPage === 1}
-              className="px-3 py-1 bg-purple-200 rounded disabled:opacity-50"
-            >
-              Prev
-            </button>
-
-            <div className="flex gap-2 mt-4">
-              {buttons}
-            </div>
-
-            <button
-              onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
-              disabled={currentPage === totalPages}
-              className="px-3 py-1 bg-purple-200 rounded disabled:opacity-50"
-            >
-              Next
-            </button>
-          </div>
-        </div>
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            setCurrentPage={setCurrentPage}
+          />
+        </>
       )}
 
       {deleteState.error && (
@@ -196,7 +190,6 @@ export default function AppointmentTable({ appointments }: Props) {
       {updateState.error && (
         <p className="text-red-600 text-sm mt-2 text-center">{updateState.error}</p>
       )}
-
     </div>
   );
 }

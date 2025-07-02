@@ -5,7 +5,6 @@ import { Model } from 'mongoose';
 import { CreateAppointmentDto } from './dto/createAppointmentDto';
 import { AppointmentStatus } from './enums/appointmentStatus';
 
-
 @Injectable()
 export class AppointmentService {
   constructor(
@@ -15,7 +14,7 @@ export class AppointmentService {
 
   async findAll(): Promise<AppointmentDocument[]> {
     return await this.appointmentModel
-      .find() 
+      .find()
       .populate('doctor')
       .populate('user')
       .exec();
@@ -28,9 +27,9 @@ export class AppointmentService {
       patientName: createAppointmentDto.patientName,
       doctor: createAppointmentDto.doctor,
       user: createAppointmentDto.user,
-      date:createAppointmentDto.date,
+      date: createAppointmentDto.date,
       slot: createAppointmentDto.slot,
-      createdAt:new Date(),
+      createdAt: new Date(),
     });
     appointment.save();
     return (await appointment.populate('user')).populate('doctor');
@@ -52,21 +51,60 @@ export class AppointmentService {
       .populate('user')
       .populate('doctor')
       .exec();
-      console.log("appointments from backend",appointments)
+    console.log('appointments from backend', appointments);
     return appointments;
   }
 
-
-  async updateStatus(id: string, status: AppointmentStatus): Promise<AppointmentDocument> {
-    const updated = await this.appointmentModel.findByIdAndUpdate(
-      id,
-     {status},
-    );
+  async updateStatus(
+    id: string,
+    status: AppointmentStatus,
+  ): Promise<AppointmentDocument> {
+    const updated = await this.appointmentModel.findByIdAndUpdate(id, {
+      status,
+    });
     if (!updated) {
       throw new NotFoundException(`Appointment with id ${id} not found`);
     }
     return (await updated.populate('doctor')).populate('user');
   }
+
+
+async getPaginatedAppointments(page: number, limit: number, search: string) {
+  const skip = (page - 1) * limit;
+
+  const searchRegex = new RegExp(search, 'i'); // case-insensitive
+
+  const query = search
+    ? {
+        $or: [
+          { patientName: { $regex: searchRegex } },
+          { 'doctor.name': { $regex: searchRegex } }
+        ],
+      }
+    : {};
+
+  const [appointments, total] = await Promise.all([
+    this.appointmentModel
+      .find(query)
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit)
+      .populate('doctor')
+      .populate('user')
+      .exec(),
+
+    this.appointmentModel.countDocuments(query),
+  ]);
+
+  return {
+    data: appointments,
+    total,
+    page,
+    limit,
+    totalPages: Math.ceil(total / limit),
+  };
+}
+
 
   // async findById(id: string): Promise<Appointment> {
   //   const appointment = await this.appointmentModel.findById(id).populate('doctorId').populate('userID');
