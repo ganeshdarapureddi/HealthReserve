@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { Decrypt } from "./src/lib/auth";
+import { Decrypt } from "./lib/auth";
 import { Role } from "@/enums/role";
 
 export function middleware(request: NextRequest,response:NextResponse) {
@@ -8,11 +8,11 @@ export function middleware(request: NextRequest,response:NextResponse) {
   const userRoleToken = request.cookies.get("userRole")?.value;
   const token=request.cookies.get("token")?.value;
 
-  // console.log("token at middleware:",token);
+  console.log("token at middleware:",token);
   const path = request.nextUrl.pathname;
 
   // const userId = Decrypt(userIdToken);
-  const userRole = Decrypt(userRoleToken);
+  const userRole = Decrypt(userRoleToken);  
 
   if(!token){
     return NextResponse.redirect(new URL("/login", request.url));
@@ -44,3 +44,4 @@ export function middleware(request: NextRequest,response:NextResponse) {
 export const config = {
   matcher: ["/dashboard/:path*"],
 };
+  

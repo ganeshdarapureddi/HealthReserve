@@ -16,7 +16,6 @@ interface Props {
 
 export default function AppointmentTable({ appointments }: Props) {
   const initialState = { message: undefined, error: undefined };
-
   const [deleteState, deleteFormAction] = useActionState(deleteAppointment, initialState);
   const [updateState, updateFormAction] = useActionState(updateAppointmentStatus, initialState);
 
@@ -29,13 +28,13 @@ export default function AppointmentTable({ appointments }: Props) {
       (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
     )
   );
-
   const [isPending, startTransition] = useTransition();
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 2;
+
   useEffect(() => {
-    const handler = setTimeout(() => {
-      setDebouncedInput(input);
-    }, 1000);
+    const handler = setTimeout(() => setDebouncedInput(input), 1000);
     return () => clearTimeout(handler);
   }, [input]);
 
@@ -46,6 +45,11 @@ export default function AppointmentTable({ appointments }: Props) {
     }
   }, [deleteState, deletedId]);
 
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [debouncedInput]);
+
+
   const handleStatusChange = (id: string, status: string) => {
     setLocalAppointments((prev) =>
       prev.map((a) => (a._id === id ? { ...a, status } : a))
@@ -53,11 +57,35 @@ export default function AppointmentTable({ appointments }: Props) {
     const formData = new FormData();
     formData.append('id', id);
     formData.append('status', status);
-
-    startTransition(() => {
-      updateFormAction(formData);
-    });
+    startTransition(() => updateFormAction(formData));
   };
+
+  const filteredAppointments = localAppointments.filter((a) =>
+    a.patientName.toLowerCase().includes(debouncedInput.toLowerCase()) ||
+    a.doctor.name.toLowerCase().includes(debouncedInput.toLowerCase())
+  );
+
+  const totalPages = Math.ceil(filteredAppointments.length / itemsPerPage);
+  const paginatedAppointments = filteredAppointments.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
+
+  const buttons = [];
+  for (let i = 1; i <= totalPages; i++) {
+    buttons.push(
+      <button
+        key={i}
+        onClick={() => setCurrentPage(i)}
+        className={`px-3 py-1 rounded ${currentPage === i ? 'bg-purple-600 text-white' : 'bg-purple-100'
+          }`}
+      >
+        {i}
+      </button>
+    );
+  }
+
 
   return (
     <div className="p-6 bg-gray-50 rounded-lg shadow-md">
@@ -87,61 +115,77 @@ export default function AppointmentTable({ appointments }: Props) {
                 </tr>
               </thead>
               <tbody>
-                {localAppointments
-                  .filter((a) =>
-                    a.patientName.toLowerCase().includes(debouncedInput.toLowerCase()) ||
-                    a.doctor.name.toLowerCase().includes(debouncedInput.toLowerCase())
-                  )
-                  .map((a, index) => (
-                    <tr
-                      key={a._id}
-                      className={index % 2 === 0 ? 'bg-white' : 'bg-purple-100 hover:bg-purple-200'}
-                    >
-                      <td className="px-4 py-3 border-b">{a._id}</td>
-                      <td className="px-4 py-3 border-b">{a.patientName}</td>
-                      <td className="px-4 py-3 border-b">{a.doctor.name}</td>
-                      <td className="px-4 py-3 border-b">{a.date}</td>
-                      <td className="px-4 py-3 border-b">{a.slot}</td>
-                      <td className="px-4 py-3 border-b">
-                        <select
-                          name="status"
-                          value={a.status}
-                          onChange={(e) => handleStatusChange(a._id, e.target.value)}
-                          className="border p-1 rounded text-sm bg-white"
-                          disabled={isPending || a.status === 'completed'}
+                {paginatedAppointments.map((a, index) => (
+                  <tr
+                    key={a._id}
+                    className={index % 2 === 0 ? 'bg-white' : 'bg-purple-100 hover:bg-purple-200'}
+                  >
+                    <td className="px-4 py-3 border-b">{a._id}</td>
+                    <td className="px-4 py-3 border-b">{a.patientName}</td>
+                    <td className="px-4 py-3 border-b">{a.doctor.name}</td>
+                    <td className="px-4 py-3 border-b">{a.date}</td>
+                    <td className="px-4 py-3 border-b">{a.slot}</td>
+                    <td className="px-4 py-3 border-b">
+                      <select
+                        name="status"
+                        value={a.status}
+                        onChange={(e) => handleStatusChange(a._id, e.target.value)}
+                        className="border p-1 rounded text-sm bg-white"
+                        disabled={isPending || a.status === 'completed'}
+                      >
+                        <option value="pending">Pending</option>
+                        <option value="completed">Completed</option>
+                      </select>
+                    </td>
+                    <td className="px-4 py-3 border-b">
+                      <form
+                        action={deleteFormAction}
+                        className="inline"
+                        onSubmit={() => setDeletedId(a._id)} // Set the ID before submitting
+                      >
+                        <input type="hidden" name="id" value={a._id} />
+                        <button
+                          type="submit"
+                          className="shadow-2xl px-3 py-1 rounded flex items-center space-x-2 group"
                         >
-                          <option value="pending">Pending</option>
-                          <option value="completed">Completed</option>
-                        </select>
-                      </td>
-                      <td className="px-4 py-3 border-b">
-                        <form
-                          action={(formData) => {
-                            setDeletedId(a._id);
-                            deleteFormAction(formData);
-                          }}
-                          className="inline"
-                        >
-                          <input type="hidden" name="id" value={a._id} />
-                          <button
-                            type="submit"
-                            className="shadow-2xl px-3 py-1 rounded flex items-center space-x-2 group"
-                          >
-                            <div className="transition-transform duration-300 group-hover:scale-125">
-                              <NextImage
-                                src="/icons/delete-icon.svg"
-                                alt="Delete"
-                                width={20}
-                                height={20}
-                              />
-                            </div>
-                          </button>
-                        </form>
-                      </td>
-                    </tr>
-                  ))}
+                          <div className="transition-transform duration-300 group-hover:scale-125">
+                            <NextImage
+                              src="/icons/delete-icon.svg"
+                              alt="Delete"
+                              width={20}
+                              height={20}
+                            />
+                          </div>
+                        </button>
+                      </form>
+
+                    </td>
+                  </tr>
+                ))}
               </tbody>
             </table>
+          </div>
+
+          <div className="flex justify-between space-x-2 mt-4">
+            <button
+              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+              disabled={currentPage === 1}
+              className="px-3 py-1 bg-purple-200 rounded disabled:opacity-50"
+            >
+              Prev
+            </button>
+
+            <div className="flex gap-2 mt-4">
+              {buttons}
+            </div>
+
+            <button
+              onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+              disabled={currentPage === totalPages}
+              className="px-3 py-1 bg-purple-200 rounded disabled:opacity-50"
+            >
+              Next
+            </button>
           </div>
         </div>
       )}
@@ -152,9 +196,7 @@ export default function AppointmentTable({ appointments }: Props) {
       {updateState.error && (
         <p className="text-red-600 text-sm mt-2 text-center">{updateState.error}</p>
       )}
-      {updateState.message && (
-        <p className="text-green-600 text-sm mt-2 text-center">{updateState.message}</p>
-      )}
+
     </div>
   );
 }

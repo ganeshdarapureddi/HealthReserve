@@ -47,7 +47,7 @@ export default async function DashboardPage() {
       // console.log("res from the user appointment",res);
       const pendingAppointments = res.filter((a: IAppointment) => a.status === "pending");
       pendingAppointmentCount = pendingAppointments.length;
-      console.log("res from the user appointment",pendingAppointments);
+      // console.log("res from the user appointment",pendingAppointments);
       // console.log("userAppointments from dashboard page", res);
       userAppointments = res.length;
     }

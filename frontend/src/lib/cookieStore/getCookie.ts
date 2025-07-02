@@ -14,6 +14,6 @@ export async function GetCookie(key:string):Promise<string|null>{
 
 export default async function GetTokenFromCookie(key:string){
     const userCookie = (await cookies()).get(key)?.value;
-    console.log("token from Cookie:",userCookie)
+    // console.log("token from Cookie:",userCookie)
     return userCookie;
 }
