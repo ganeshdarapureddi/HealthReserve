@@ -6,7 +6,7 @@ export default function IntroductionPage() {
   return (
     <main className="p-12">
     <section className="min-h-screen flex flex-col flex-wrap justify-center items-center md:flex-row ">
-      <div className="md:w-1/2">
+      <div className="md:w-1/2 w-full">
         <h1 className='font-bold text-3xl  font-sans mb-10'>Welcome to <span className="text-6xl  font-normal bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-purple-900">Health Reserve</span></h1>
         <p className='w-3/4 text-gray-500 mb-7 font-serif'>
           HealthReserve is your all-in-one platform for managing health. <br />
@@ -24,13 +24,14 @@ export default function IntroductionPage() {
           <Link href="/dashboard/appointment" className="border-2 border-purple-900 text-purple-950 p-1 px-3 rounded-sm hover:bg-purple-900 hover:text-white">Make an Appointment</Link>
         </div>
       </div>
-      <div className="md:w-1/2 shadow-2xl rounded-2xl ">
+      <div className="md:w-1/2 w-full mt-10 shadow-2xl rounded-2xl ">
         <Image
           src="/Intro-Doctor.png"
           width={900}
           height={900}
           alt="Intro Image"
           className='rounded-2xl'
+          priority={true}
         />
       </div>
     </section>
