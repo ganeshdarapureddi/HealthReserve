@@ -13,9 +13,10 @@ export default async function AppointmentBookingPage() {
       </main>
     );
   }
-  catch(err:any){
-    if(err.message==="unauthorized"){
-      redirect("/api/logout");
+  catch (err: any) {
+    if (err.message === "unauthorized") {
+      redirect(`/expire?from=/dashboard/appointment/book`);
     }
+    throw err;
   }
 }

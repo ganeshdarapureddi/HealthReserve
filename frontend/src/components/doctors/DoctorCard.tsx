@@ -2,10 +2,10 @@
 
 import React from 'react';
 
-import { Doctor } from '@/lib/models';
+import { IDoctor } from '@/lib/models';
 
 interface Props{
-  doctor:Doctor
+  doctor:IDoctor
 }
 
 export function DoctorCard({ doctor }: Props) {

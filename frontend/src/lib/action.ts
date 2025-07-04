@@ -111,24 +111,15 @@ export async function getUserAppointment(): Promise<IAppointment[] | null> {
   
   try {
     const userId = await GetCookie("userId");
-    const res = await getAppointmentByUserId(userId);
+    const data = await getAppointmentByUserId(userId);
 
-    if (!res.ok) {
-      console.error("Failed to fetch appointment:", res.statusText);
-      return null;
-    }
-
-    const data = await res.json();
     // console.log("Fetched appointment:", data);
 
     return data || null;
   } catch (error:any) {
-    console.error("Failed to fetch appointment:", error);
-    if (error.message === "unauthorized") {
-      redirect("/api/logout");
-    }
-    return null;
+    throw error;
   }
+ 
 }
 
 export type RegisterState = {
@@ -262,7 +253,7 @@ export async function loginUser(
       };
     }
 
-    const { access_token, userId, userRole } = await res.json();
+    const { access_token,refresh_token, userId, userRole } = await res.json();
     // console.log("token",access_token);
     // console.log("userID:",userId);
     // console.log("role:",userRole);
@@ -272,10 +263,17 @@ export async function loginUser(
       path: "/",
     });
 
+    (await cookies()).set("refreshToken", refresh_token, {
+      httpOnly: true,
+      path: "/",
+    });
+    
+
     (await cookies()).set("userId", Encrypt(userId), {
       httpOnly: true,
       path: "/",
     });
+
 
     (await cookies()).set("userRole", Encrypt(userRole), {
       httpOnly: true,
@@ -309,10 +307,12 @@ export async function googleLoginAction(formData: FormData) {
 
   const data = await res.json();
 
-  if (data?.access_token) {
-    (await cookies()).set('token', data.access_token, { httpOnly: true, path: '/' });
-    (await cookies()).set('userId', Encrypt(data.userId), { httpOnly: true, path: '/' });
-    (await cookies()).set('userRole', Encrypt(data.userRole), { httpOnly: true, path: '/' });
+  if (res.ok && data?.access_token && data?.refresh_token) {
+    const cookieStore =await cookies();
+     cookieStore.set('token', data.access_token, { httpOnly: true, path: '/' });
+     cookieStore.set('refreshToken', data.refresh_token, { httpOnly: true, path: '/' });
+     cookieStore.set('userId', Encrypt(data.userId), { httpOnly: true, path: '/' });
+     cookieStore.set('userRole', Encrypt(data.userRole), { httpOnly: true, path: '/' });
 
     return { success: true, message: 'Google login successful' };
   }
@@ -321,15 +321,12 @@ export async function googleLoginAction(formData: FormData) {
 }
 
 
-
-
 export async function logout() {
   // Deletes the userId cookie
-
+  (await cookies()).delete("refreshToken");
   (await cookies()).delete("token");
   (await cookies()).delete("userId");
   (await cookies()).delete("userRole");
-
   // Redirect to login page
   redirect("/login");
 }
@@ -435,5 +432,63 @@ export async function updateAppointmentStatus(
   } catch (e) {
     console.error("Status update failed:", e);
     return { error: "Failed to update status" };
+  }
+}
+
+
+
+
+interface RefreshSessionResult {
+  success?:boolean,
+  redirectPath?:string
+  error?: string;
+}
+
+export async function refreshSession(
+  _: RefreshSessionResult,
+  formData: FormData
+): Promise<RefreshSessionResult> {
+  const redirectPath = formData.get('redirectPath')?.toString() || '/';
+  console.log("redirect path from refresh session",redirectPath);
+
+  const refreshToken = await GetTokenFromCookie("refreshToken");
+  // console.log("refresh token from refresh session action",refreshToken);
+
+  try {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/refresh`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${refreshToken}`,
+      },
+    });
+
+    if (!res.ok) {
+      return { error: 'Session expired. Please log in again.' };
+    }
+
+    const { access_token, userId, userRole } = await res.json();
+
+    // console.log("data from refresh session",access_token,userId,userRole)
+
+    const cookieStore = cookies();
+
+    (await cookieStore).set('token', access_token, {
+      httpOnly: true,
+      path: '/',
+    });
+
+    (await cookieStore).set('userId', Encrypt(userId), {
+      httpOnly: true,
+      path: '/',
+    });
+
+    (await cookieStore).set('userRole', Encrypt(userRole), {
+      httpOnly: true,
+      path: '/',
+    });
+
+    return { success: true, redirectPath };
+  } catch (err) {
+    return { error: 'Could not refresh session' };
   }
 }

@@ -1,4 +1,4 @@
-import { getDoctors } from '@/lib/data';
+import { getDoctors} from '@/lib/data';
 import { DoctorCard } from '@/components/doctors/DoctorCard';
 import { redirect } from 'next/navigation';
 
@@ -24,8 +24,8 @@ export default async function DoctorsPage() {
   }
   catch (err: any) {
     if (err.message === "unauthorized") {
-      redirect("/api/logout");
+      redirect(`/expire?from=/dashboard/doctors`);
     }
-    return err;
+    throw err;
   }
 }

@@ -3,8 +3,7 @@ import { getUserAppointment } from '@/lib/action';
 import { redirect } from 'next/navigation';
 
 export default async function AppointmentsPage() {
-  try {
-
+  try{
     const appointment = await getUserAppointment();
     const pendingAppointment = appointment?.find(a => a.status === 'pending');
     // console.log("appointment from the display page",appointment)
@@ -52,11 +51,12 @@ export default async function AppointmentsPage() {
         )}
       </main>
     );
-
   }
-  catch (err: any) {
-    if (err.message === "unauthorized") {
-      redirect("/api/logout");
+    catch (err: any) {
+      if (err.message === "unauthorized") {
+        redirect(`/expire?from=/dashboard/appointment`);
+      }
+      throw err;
     }
   }
-}
+

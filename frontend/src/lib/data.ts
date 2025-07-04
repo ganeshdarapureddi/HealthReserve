@@ -3,27 +3,34 @@
 import { revalidatePath } from "next/cache";
 import GetTokenFromCookie from "./cookieStore/getCookie";
 import { IDoctor, IUser, IAppointment } from "./models";
+import { redirect } from "next/navigation";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL!;
 
 export async function getDoctors(): Promise<IDoctor[]> {
-  const token = await GetTokenFromCookie("token");
-  console.log("token::::", token);
+
+  let token = await GetTokenFromCookie("token");
+
   const res = await fetch(`${BASE_URL}/doctors`, {
     method: "GET",
     headers: {
-      "Content-Type": "application/json", 
+      "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     },
     cache: "force-cache",
   });
 
+
   if (res.status === 401) {
-    console.log("Token expired or unauthorized");
+    console.log("Token expired or unauthorized after refresh attempt");
     throw new Error("unauthorized");
   }
-  if (!res.ok) throw new Error("Failed to fetch doctors");
-  return await res.json();
+
+  if (!res.ok) {
+    throw new Error("Failed to fetch doctors");
+  }
+
+  return await res.json();  
 }
 
 export async function getUsers(): Promise<IUser[]> {
@@ -34,10 +41,10 @@ export async function getUsers(): Promise<IUser[]> {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     },
-  
   });
   if (res.status === 401) {
     console.log("Token expired or unauthorized");
+    // redirect(`/expire?from=/dashboard`);
     throw new Error("unauthorized");
   }
   if (!res.ok) throw new Error("Failed to fetch users");
@@ -55,6 +62,7 @@ export async function getAppointments(): Promise<IAppointment[]> {
   });
   if (res.status === 401) {
     console.log("Token expired or unauthorized");
+    // redirect(`/expire?from=/dashboard`);
     throw new Error("unauthorized");
   }
   // console.log(res);
@@ -64,6 +72,7 @@ export async function getAppointments(): Promise<IAppointment[]> {
 
 export async function getUserById(userId: string | null): Promise<IUser> {
   const token = await GetTokenFromCookie("token");
+  console.log("token from the getuser byID",token);
   const res = await fetch(`${BASE_URL}/users/${userId}`, {
     method: "GET",
     headers: {
@@ -73,6 +82,7 @@ export async function getUserById(userId: string | null): Promise<IUser> {
   });
   if (res.status === 401) {
     console.log("Token expired or unauthorized");
+    // redirect(`/expire?from=/dashboard`);
     throw new Error("unauthorized");
   }
   console.log(res);
@@ -82,7 +92,7 @@ export async function getUserById(userId: string | null): Promise<IUser> {
 
 export async function getAppointmentByUserId(
   userId: string | null
-): Promise<Response> {
+): Promise<IAppointment[]> {
   const token = await GetTokenFromCookie("token");
   const res = await fetch(`${BASE_URL}/appointments/${userId}`, {
     method: "GET",
@@ -93,10 +103,14 @@ export async function getAppointmentByUserId(
   });
   if (res.status === 401) {
     console.log("Token expired or unauthorized");
+    // redirect(`/expire?from=/dashboard`);
     throw new Error("unauthorized");
   }
+  if (!res.ok) {
+    throw new Error("Failed to fetch appointments");
+  }
 
-  return res;
+  return await res.json();
 }
 
 export async function deleteAppointmentApi(
@@ -112,15 +126,15 @@ export async function deleteAppointmentApi(
   });
   if (res.status === 401) {
     console.log("Token expired or unauthorized");
+    // redirect(`/expire?from=/dashboard`);
     throw new Error("unauthorized");
   }
   return res;
 }
 
-
 export async function UpdateAppointmentStatusApi(
   appointmentId: string,
-  status:string
+  status: string
 ): Promise<Response> {
   const token = await GetTokenFromCookie("token");
   const res = await fetch(`${BASE_URL}/appointments/update/${appointmentId}`, {
@@ -133,20 +147,18 @@ export async function UpdateAppointmentStatusApi(
   });
   if (res.status === 401) {
     console.log("Token expired or unauthorized");
+    // redirect(`/expire?from=/dashboard`);
     throw new Error("unauthorized");
   }
-  revalidatePath("/dashboard/admin")
+  revalidatePath("/dashboard/admin");
 
   return res;
 }
 
-
-
-
 export async function getAppointmentByPagination(
   currentPage: number,
   itemsPerPage: number,
-  search: string = ''
+  search: string = ""
 ): Promise<{ data: IAppointment[]; totalPages: number }> {
   const params = new URLSearchParams({
     page: currentPage.toString(),
@@ -156,15 +168,23 @@ export async function getAppointmentByPagination(
 
   const token = await GetTokenFromCookie("token");
 
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL!}/appointments/paginated?${params}`, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
-  });
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_API_BASE_URL!}/appointments/paginated?${params}`,
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  if (res.status === 401) {
+    console.log("Token expired or unauthorized");
+    // redirect(`/expire?from=/dashboard`);
+    throw new Error("unauthorized");
+  }
 
-  if (!res.ok) throw new Error('Failed to fetch');
+  if (!res.ok) throw new Error("Failed to fetch");
 
   return res.json(); // now you return directly parsed JSON
 }

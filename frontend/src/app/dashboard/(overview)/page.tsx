@@ -9,14 +9,14 @@ import {
   getAppointmentByUserId
 } from '@/lib/data';
 import { GetCookie } from '@/lib/cookieStore/getCookie';
-import { redirect } from 'next/navigation';
 import { IAppointment } from '@/lib/models';
+import { redirect } from 'next/navigation';
 
 export default async function DashboardPage() {
-
   try {
 
     const userId = await GetCookie("userId");
+    // console.log("userID from the Dashboard page", userId)
     const userRole = await GetCookie("userRole");
 
 
@@ -24,7 +24,7 @@ export default async function DashboardPage() {
 
     let totalAppointments = 0;
     let userAppointments = 0;
-    let pendingAppointmentCount=0;
+    let pendingAppointmentCount = 0;
     let totalDoctors = 0;
     let totalUsers = 0;
 
@@ -38,12 +38,12 @@ export default async function DashboardPage() {
 
       totalAppointments = appointments.length;
       const pendingAppointments = appointments.filter((a: IAppointment) => a.status === "pending");
-      pendingAppointmentCount=pendingAppointments.length
+      pendingAppointmentCount = pendingAppointments.length
       totalUsers = users.length;
     }
     else {
-      const userAppointment = await getAppointmentByUserId(userId);
-      const res = await userAppointment.json();
+      const res = await getAppointmentByUserId(userId);
+
       // console.log("res from the user appointment",res);
       const pendingAppointments = res.filter((a: IAppointment) => a.status === "pending");
       pendingAppointmentCount = pendingAppointments.length;
@@ -65,12 +65,11 @@ export default async function DashboardPage() {
 
     );
   }
-
   catch (err: any) {
     if (err.message === "unauthorized") {
-      redirect("/api/logout");
+      redirect(`/expire?from=/dashboard`);
     }
     throw err;
-  } 
+  }
 
 }

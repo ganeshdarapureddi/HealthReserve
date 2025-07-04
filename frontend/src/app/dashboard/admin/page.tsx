@@ -14,7 +14,7 @@ export default async function AdminDashboard() {
   }
   catch (err: any) {
     if (err.message === "unauthorized") {
-      redirect("/api/logout");
+      redirect(`/expire?from=/dashboard/admin`);
     }
     throw err;
   }
