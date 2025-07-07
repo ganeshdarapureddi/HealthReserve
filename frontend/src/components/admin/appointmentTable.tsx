@@ -6,7 +6,7 @@ import {
   useState,
   useTransition,
 } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { redirect, useRouter, useSearchParams } from 'next/navigation';
 import { deleteAppointment, updateAppointmentStatus } from '@/lib/action';
 import { IAppointment } from '@/lib/models';
 import NextImage from 'next/image';
@@ -62,7 +62,10 @@ export default function AppointmentTable() {
         const result = await getAppointmentByPagination(currentPage, itemsPerPage, debouncedInput);
         setAppointments(result.data);
         setTotalPages(result.totalPages);
-      } catch (error) {
+      } catch (error:any) {
+        if (error.message === "unauthorized") {
+          redirect(`/expire?from=/dashboard/admin`);
+        }
         console.error('Error fetching appointments:', error);
         setAppointments([]);
         setTotalPages(1);

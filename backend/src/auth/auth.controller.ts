@@ -4,8 +4,6 @@ import {
   Body,
   UnauthorizedException,
   Headers,
-  Res,
-  Req,
 } from '@nestjs/common';
 import { UserService } from '../user/user.service';
 import { CreateUserDto } from './dto/createUserDto';
@@ -36,7 +34,7 @@ export class AuthController {
 
     const accessToken = await this.jwtService.signAsync(payload, {
       secret: process.env.JWT_SECRET,
-      expiresIn: '50s',
+      expiresIn: '1hr',
     });
 
     const refreshToken = await this.jwtService.signAsync(payload, {
@@ -126,7 +124,7 @@ export class AuthController {
         { sub: payload.sub, role: payload.role },
         {
           secret: process.env.JWT_SECRET,
-          expiresIn: '30s',
+          expiresIn: '1hr',
         },
       );
   

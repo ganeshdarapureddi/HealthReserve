@@ -5,6 +5,8 @@ import { refreshSession } from '@/lib/action';
 import NextImage from 'next/image';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect } from 'react';
+import ButtonLink from '@/components/button/ButtonLink';
+import Link from 'next/link';
 
 export default function SessionExpired() {
   const router = useRouter();
@@ -44,9 +46,15 @@ export default function SessionExpired() {
           height={100}
         />
         <h1 className="font-bold mt-4 text-2xl">Your Session is Expired !!</h1>
-        <p>Please refresh the page to login again.</p>
+        <p>Please refresh the page to Go Back into the action</p>
 
-        <button type="submit">Refresh</button>
+        <button className="px-6 py-2 text-white font-semibold rounded-lg bg-gradient-to-r from-purple-600 to-indigo-700 hover:from-purple-700 hover:to-indigo-800 text-center transition" type="submit">Refresh</button>
+        <Link
+            href="/login"
+            className="text-purple-700 font-semibold hover:underline hover:text-purple-900 transition"
+          >
+            Return to Login
+          </Link>
 
         {'error' in state && state.error && (
           <p className="text-red-600 text-sm">{state.error}</p>
