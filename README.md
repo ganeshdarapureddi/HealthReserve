@@ -17,4 +17,6 @@ $ npm install class-validator class-transformer
 
 $ npm install @nestjs/swagger
 
+$ npm install @nestjs/schedule
+
 

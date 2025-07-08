@@ -18,6 +18,9 @@ import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { JwtStrategy } from './auth/jwt.strategy';
 import { ConfigModule } from '@nestjs/config';
+import { ScheduleModule } from '@nestjs/schedule';
+import { RolesGuard } from './guards/roles.guard';
+import { JwtAuthGuard } from './guards/jwt-auth.guard';
 
 @Module({
   imports: [
@@ -32,10 +35,11 @@ import { ConfigModule } from '@nestjs/config';
       envFilePath: '.env',
     }),
     PassportModule,
-    JwtModule.register({
+    JwtModule.register({  
       secret: process.env.JWT_SECRET,
       signOptions: { expiresIn: '1hr' },
     }),
+    ScheduleModule.forRoot(),
 
   ],  
   controllers: [
@@ -44,7 +48,7 @@ import { ConfigModule } from '@nestjs/config';
     DoctorController,
     AuthController,
   ],
-  providers: [UserService, AppointmentService, DoctorService, JwtStrategy],
+  providers: [UserService, AppointmentService, DoctorService, JwtStrategy,RolesGuard,JwtAuthGuard],
   exports: [JwtModule],
 })
 

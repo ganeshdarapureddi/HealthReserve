@@ -412,7 +412,7 @@ export async function updateAppointmentStatus(
     console.log("this is from the admin panel",data.slot);
 
     
-    if (status === "completed" && data?.doctor?._id && data?.slot) {
+    if (status === "completed" || status==="cancelled" && data?.doctor?._id && data?.slot) {
       const token = await GetTokenFromCookie("token");
 
       await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/doctors/${data.doctor._id}`, {

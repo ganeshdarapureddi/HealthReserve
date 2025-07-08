@@ -7,8 +7,10 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
   app.enableCors({
-    origin: 'http://localhost:3000',
+    origin:process.env.NEXT_PUBLIC_SITE_URL,
     credentials: true,
+    // methods: 'GET,HEAD,POST,PATCH,DELETE',
+    // exposedHeaders: ['Content-Type', 'Cache-Control'],
   });
 
   const config = new DocumentBuilder()

@@ -1,5 +1,4 @@
 'use client';
-
 import {
   useActionState,
   useEffect,
@@ -47,6 +46,7 @@ export default function AppointmentTable() {
 
   // Update URL when page or search changes
   useEffect(() => {
+    console.log("this is to verify the URL in appointmentTable",process.env.NEXT_PUBLIC_API_BASE_URL)
     const params = new URLSearchParams();
     params.set('page', currentPage.toString());
     params.set('limit', itemsPerPage.toString());
@@ -149,6 +149,7 @@ export default function AppointmentTable() {
                       >
                         <option value="pending">Pending</option>
                         <option value="completed">Completed</option>
+                        <option value="cancelled">Cancelled</option>
                       </select>
                     </td>
                     <td className="px-4 py-3 border-b">

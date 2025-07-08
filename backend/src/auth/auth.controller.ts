@@ -83,7 +83,7 @@ export class AuthController {
   
     const access_token = await this.jwtService.signAsync(jwtPayload, {
       secret: process.env.JWT_SECRET,
-      expiresIn: '50s',
+      expiresIn: '1hr',
     });
   
     const refresh_token = await this.jwtService.signAsync(jwtPayload, {

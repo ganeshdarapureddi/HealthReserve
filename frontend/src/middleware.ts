@@ -8,7 +8,7 @@ export function middleware(request: NextRequest,response:NextResponse) {
   const userRoleToken = request.cookies.get("userRole")?.value;
   const token=request.cookies.get("token")?.value;
 
-  console.log("token at middleware:",token);
+  // console.log("token at middleware:",token);
   const path = request.nextUrl.pathname;
 
   // const userId = Decrypt(userIdToken);

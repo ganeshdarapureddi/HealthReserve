@@ -25,7 +25,7 @@ export default function LoginForm() {
     }
   }, [state, router]);
 
-  const handleGoogleLogin = async (credentialResponse: any ) => {
+  const handleGoogleLogin = async (credentialResponse: any) => {
     // setGoogleError(null);
 
     const formData = new FormData();
@@ -53,7 +53,7 @@ export default function LoginForm() {
           type="email"
           name="email"
           id="email"
-          defaultValue={state.value?.email??""}
+          defaultValue={state.value?.email ?? ""}
           className="border-2 border-purple-400 w-80 text-gray-800  bg-purple-50 focus:ring-2 focus:ring-purple-700 focus:outline-none p-2 rounded"
         />
       </div>
@@ -65,7 +65,7 @@ export default function LoginForm() {
           type="password"
           name="password"
           id="password"
-          defaultValue={state.value?.password??""}
+          defaultValue={state.value?.password ?? ""}
           className="border-2 border-purple-400 text-gray-800 bg-purple-50 w-80 focus:ring-2 focus:ring-purple-700 focus:outline-none p-2 rounded"
         />
       </div>
@@ -87,17 +87,17 @@ export default function LoginForm() {
         <GoogleLogin
           onSuccess={handleGoogleLogin}
           // onError={() => setGoogleError('Google login failed')}
-          useOneTap 
+          useOneTap
           use_fedcm_for_prompt={false}
         />
 
         {isPending && <p className="text-sm text-purple-700">Signing in with Google...</p>}
-      
+        
       </div>
-    
+
       {state.errors?.overall && (
-          <p className="text-red-500 text-center">{state.errors.overall}</p>
-        )}
+        <p className="text-red-500 text-center">{state.errors.overall}</p>
+      )}
 
       {/* Footer */}
       <p className="text-sm text-center text-gray-600">

@@ -4,12 +4,17 @@ import { Appointment, AppointmentDocument } from './appointment.schema';
 import { Model } from 'mongoose';
 import { CreateAppointmentDto } from './dto/createAppointmentDto';
 import { AppointmentStatus } from './enums/appointmentStatus';
+import { Cron } from '@nestjs/schedule';
+import { Doctor, DoctorDocument } from 'src/doctor/doctor.schema';
+import { Subject } from 'rxjs';
 
 @Injectable()
 export class AppointmentService {
+  private appointmentUpdates = new Subject<any>();
   constructor(
     @InjectModel(Appointment.name)
     private appointmentModel: Model<AppointmentDocument>,
+    @InjectModel(Doctor.name) private doctorModel: Model<DoctorDocument>,
   ) {}
 
   async findAll(): Promise<AppointmentDocument[]> {
@@ -68,57 +73,87 @@ export class AppointmentService {
     return (await updated.populate('doctor')).populate('user');
   }
 
+  async getPaginatedAppointments(page: number, limit: number, search: string) {
+    const skip = (page - 1) * limit;
 
-async getPaginatedAppointments(page: number, limit: number, search: string) {
-  const skip = (page - 1) * limit;
+    const searchRegex = new RegExp(search, 'i'); // case-insensitive
 
-  const searchRegex = new RegExp(search, 'i'); // case-insensitive
+    const query = search
+      ? {
+          $or: [
+            { patientName: { $regex: searchRegex } },
+            { 'doctor.name': { $regex: searchRegex } },
+          ],
+        }
+      : {};
 
-  const query = search
-    ? {
-        $or: [
-          { patientName: { $regex: searchRegex } },
-          { 'doctor.name': { $regex: searchRegex } }
-        ],
-      }
-    : {};
+    const [appointments, total] = await Promise.all([
+      this.appointmentModel
+        .find(query)
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit)
+        .populate('doctor')
+        .populate('user')
+        .exec(),
 
-  const [appointments, total] = await Promise.all([
-    this.appointmentModel
-      .find(query)
-      .sort({ createdAt: -1 })
-      .skip(skip)
-      .limit(limit)
-      .populate('doctor')
-      .populate('user')
-      .exec(),
+      this.appointmentModel.countDocuments(query),
+    ]);
 
-    this.appointmentModel.countDocuments(query),
-  ]);
+    return {
+      data: appointments,
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit), 
+    };
+  }
 
-  return {
-    data: appointments,
-    total,
-    page,
-    limit,
-    totalPages: Math.ceil(total / limit),
-  };
+
+
+  @Cron('1 0 * * *', { timeZone: 'Asia/Kolkata' })
+  async cancelExpiredAppointments() {
+    console.log("cron ran")
+    const now = new Date();
+    const expiredAppointments = await this.appointmentModel
+      .find({
+        status: AppointmentStatus.Pending,
+      })
+      .populate('doctor');
+
+    for (const appt of expiredAppointments) {
+      console.log(' Appointment Date:', appt.date);
+      console.log(' Appointment Slot:', appt.slot);
+      console.log(' Current Time:', now);
+
+      await this.appointmentModel.updateOne(
+        { _id: appt._id },
+        { $set: { status: AppointmentStatus.Cancelled } },
+      );
+
+      await this.doctorModel.updateOne(
+        { _id: appt.doctor, 'slots.time': appt.slot },
+        { $set: { 'slots.$.booked': false } },
+      );
+
+      console.log(`Cancelled appointment ${appt._id}`);
+    }
+
+  }
 }
 
+// async findById(id: string): Promise<Appointment> {
+//   const appointment = await this.appointmentModel.findById(id).populate('doctorId').populate('userID');
+//   if (!appointment) throw new NotFoundException('Appointment not found');
+//   return appointment;
+// }
 
-  // async findById(id: string): Promise<Appointment> {
-  //   const appointment = await this.appointmentModel.findById(id).populate('doctorId').populate('userID');
-  //   if (!appointment) throw new NotFoundException('Appointment not found');
-  //   return appointment;
-  // }
+// async findByAppointmentId(appointmentId: string): Promise<AppointmentDocument[]> {
 
-  // async findByAppointmentId(appointmentId: string): Promise<AppointmentDocument[]> {
-
-  //   const appointments = await this.appointmentModel
-  //     .find({_id: appointmentId })
-  //     .populate('user')
-  //     .populate('doctor')
-  //     .exec();
-  //   return appointments;
-  // }
-}
+//   const appointments = await this.appointmentModel
+//     .find({_id: appointmentId })
+//     .populate('user')
+//     .populate('doctor')
+//     .exec();
+//   return appointments;
+// }
