@@ -43,7 +43,6 @@ export async function getUsers(): Promise<IUser[]> {
   });
   if (res.status === 401) {
     console.log("Token expired or unauthorized");
-    // redirect(`/expire?from=/dashboard`);
     throw new Error("unauthorized");
   }
   if (!res.ok) throw new Error("Failed to fetch users");

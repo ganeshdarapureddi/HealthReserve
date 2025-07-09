@@ -2,10 +2,15 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
-import {IAppointment } from "./models";
+import { IAppointment } from "./models";
 import { Encrypt, Decrypt } from "./auth";
-import { deleteAppointmentApi, getAppointmentByUserId, UpdateAppointmentStatusApi } from "./data";
+import {
+  deleteAppointmentApi,
+  getAppointmentByUserId,
+  UpdateAppointmentStatusApi,
+} from "./data";
 import GetTokenFromCookie, { GetCookie } from "./cookieStore/getCookie";
+import { z } from "zod";
 
 export type AppointmentFormData = {
   patientName: string;
@@ -29,7 +34,7 @@ export async function bookAppointment(
 ): Promise<AppointmentState> {
   const patientName = formData.get("patientName")?.toString().trim();
   const doctorId = formData.get("doctorId")?.toString().trim();
-  const date=formData.get("date")?.toString().trim();
+  const date = formData.get("date")?.toString().trim();
   const slot = formData.get("slot")?.toString().trim();
 
   const errors: AppointmentState["errors"] = {};
@@ -46,20 +51,21 @@ export async function bookAppointment(
 
   console.log("userID:" + userId);
   console.log("userID:" + doctorId);
-  const token=await GetTokenFromCookie("token")
+  const token = await GetTokenFromCookie("token");
 
   const res = await fetch(
     `${process.env.NEXT_PUBLIC_API_BASE_URL}/appointments`,
     {
       method: "POST",
-      headers: { "Content-Type": "application/json",
+      headers: {
+        "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
-       },
+      },
       body: JSON.stringify({
         patientName,
-        doctor: doctorId?.toString(), 
+        doctor: doctorId?.toString(),
         user: userId.toString(),
-        date:date,
+        date: date,
         slot: slot,
       }),
     }
@@ -69,7 +75,6 @@ export async function bookAppointment(
     console.log("Token expired or unauthorized");
     redirect("/api/logout");
   }
-
 
   if (!res.ok) {
     const data = await res.json();
@@ -85,7 +90,8 @@ export async function bookAppointment(
     `${process.env.NEXT_PUBLIC_API_BASE_URL}/doctors/${data.doctor._id}`,
     {
       method: "PATCH",
-      headers: { "Content-Type": "application/json" ,
+      headers: {
+        "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({
@@ -94,7 +100,7 @@ export async function bookAppointment(
       }),
     }
   );
-  
+
   if (!slotUpdates.ok) {
     const error = await slotUpdates.text();
     console.error("Failed to update slot:", error);
@@ -108,7 +114,6 @@ export async function bookAppointment(
 
 //for getting data to the appointment dashboard
 export async function getUserAppointment(): Promise<IAppointment[] | null> {
-  
   try {
     const userId = await GetCookie("userId");
     const data = await getAppointmentByUserId(userId);
@@ -116,10 +121,9 @@ export async function getUserAppointment(): Promise<IAppointment[] | null> {
     // console.log("Fetched appointment:", data);
 
     return data || null;
-  } catch (error:any) {
+  } catch (error: any) {
     throw error;
   }
- 
 }
 
 export type RegisterState = {
@@ -132,9 +136,8 @@ export type RegisterState = {
     password?: string;
     confirmPassword?: string;
   };
-  success?: boolean,
+  success?: boolean;
 };
-
 
 function errorMessageFields(message: string): string {
   const lower = message.toLowerCase();
@@ -202,11 +205,9 @@ export async function registerUser(
         message: "Registration failed",
         errors: backendErrors,
         value: formValues,
-        
       };
     }
-    return { message: "Registration successful!",success:true };
-    
+    return { message: "Registration successful!", success: true };
   } catch {
     return {
       message: "Server error",
@@ -218,7 +219,7 @@ export async function registerUser(
 
 type LoginState = {
   message?: string;
-  errors?: { email?: string[]; password?: string[]; overall?:string };
+  errors?: { email?: string[]; password?: string[]; overall?: string };
   value?: {
     email?: string;
     password?: string;
@@ -232,7 +233,7 @@ export async function loginUser(
   const email = formData.get("email")?.toString() || "";
   const password = formData.get("password")?.toString() || "";
 
-  const defaultValues={email:email,password:password}
+  const defaultValues = { email: email, password: password };
 
   try {
     const res = await fetch(
@@ -249,11 +250,11 @@ export async function loginUser(
       return {
         message: "Login Failed",
         errors: { overall: err.message },
-        value:defaultValues,
+        value: defaultValues,
       };
     }
 
-    const { access_token,refresh_token, userId, userRole } = await res.json();
+    const { access_token, refresh_token, userId, userRole } = await res.json();
     // console.log("token",access_token);
     // console.log("userID:",userId);
     // console.log("role:",userRole);
@@ -267,13 +268,11 @@ export async function loginUser(
       httpOnly: true,
       path: "/",
     });
-    
 
     (await cookies()).set("userId", Encrypt(userId), {
       httpOnly: true,
       path: "/",
     });
-
 
     (await cookies()).set("userRole", Encrypt(userRole), {
       httpOnly: true,
@@ -290,36 +289,45 @@ export async function loginUser(
   }
 }
 
-
-
 export async function googleLoginAction(formData: FormData) {
-  const token = formData.get('token');
+  const token = formData.get("token");
 
   if (!token) {
-    return { success: false, message: 'Google token is missing' };
+    return { success: false, message: "Google token is missing" };
   }
 
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL!}/auth/google-login`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ token }),
-  });
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_API_BASE_URL!}/auth/google-login`,
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ token }),
+    }
+  );
 
   const data = await res.json();
 
   if (res.ok && data?.access_token && data?.refresh_token) {
-    const cookieStore =await cookies();
-     cookieStore.set('token', data.access_token, { httpOnly: true, path: '/' });
-     cookieStore.set('refreshToken', data.refresh_token, { httpOnly: true, path: '/' });
-     cookieStore.set('userId', Encrypt(data.userId), { httpOnly: true, path: '/' });
-     cookieStore.set('userRole', Encrypt(data.userRole), { httpOnly: true, path: '/' });
+    const cookieStore = await cookies();
+    cookieStore.set("token", data.access_token, { httpOnly: true, path: "/" });
+    cookieStore.set("refreshToken", data.refresh_token, {
+      httpOnly: true,
+      path: "/",
+    });
+    cookieStore.set("userId", Encrypt(data.userId), {
+      httpOnly: true,
+      path: "/",
+    });
+    cookieStore.set("userRole", Encrypt(data.userRole), {
+      httpOnly: true,
+      path: "/",
+    });
 
-    return { success: true, message: 'Google login successful' };
+    return { success: true, message: "Google login successful" };
   }
 
-  return { success: false, message: 'Invalid Google login' };
+  return { success: false, message: "Invalid Google login" };
 }
-
 
 export async function logout() {
   // Deletes the userId cookie
@@ -359,14 +367,15 @@ export async function deleteAppointment(
   // console.log("doctorID", data.doctor._id);
   // console.log("slots", data.slot);
 
-  const token=await GetTokenFromCookie("token");
+  const token = await GetTokenFromCookie("token");
   const slotUpdates = await fetch(
     `${process.env.NEXT_PUBLIC_API_BASE_URL}/doctors/${data.doctor._id}`,
     {
       method: "PATCH",
-      headers: { "Content-Type": "application/json",
+      headers: {
+        "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
-       },
+      },
       body: JSON.stringify({
         slot: data.slot,
         status: false,
@@ -380,7 +389,6 @@ export async function deleteAppointment(
 
   return { message: "Appointment removed successfully" };
 }
-
 
 interface UpdateState {
   message?: string;
@@ -408,24 +416,29 @@ export async function updateAppointmentStatus(
     }
 
     const data = await res.json();
-    console.log("this is from the admin panel",data.doctor._id);
-    console.log("this is from the admin panel",data.slot);
+    console.log("this is from the admin panel", data.doctor._id);
+    console.log("this is from the admin panel", data.slot);
 
-    
-    if (status === "completed" || status==="cancelled" && data?.doctor?._id && data?.slot) {
+    if (
+      status === "completed" ||
+      (status === "cancelled" && data?.doctor?._id && data?.slot)
+    ) {
       const token = await GetTokenFromCookie("token");
 
-      await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/doctors/${data.doctor._id}`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          slot: data.slot,
-          status: false,
-        }),
-      });
+      await fetch(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/doctors/${data.doctor._id}`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            slot: data.slot,
+            status: false,
+          }),
+        }
+      );
     }
 
     return { message: "Status updated successfully" };
@@ -435,12 +448,9 @@ export async function updateAppointmentStatus(
   }
 }
 
-
-
-
 interface RefreshSessionResult {
-  success?:boolean,
-  redirectPath?:string
+  success?: boolean;
+  redirectPath?: string;
   error?: string;
 }
 
@@ -448,22 +458,25 @@ export async function refreshSession(
   _: RefreshSessionResult,
   formData: FormData
 ): Promise<RefreshSessionResult> {
-  const redirectPath = formData.get('redirectPath')?.toString() || '/';
-  console.log("redirect path from refresh session",redirectPath);
+  const redirectPath = formData.get("redirectPath")?.toString() || "/";
+  console.log("redirect path from refresh session", redirectPath);
 
   const refreshToken = await GetTokenFromCookie("refreshToken");
   // console.log("refresh token from refresh session action",refreshToken);
 
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/refresh`, {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${refreshToken}`,
-      },
-    });
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/refresh`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${refreshToken}`,
+        },
+      }
+    );
 
     if (!res.ok) {
-      return { error: 'Session expired. Please log in again.' };
+      return { error: "Session expired. Please log in again." };
     }
 
     const { access_token, userId, userRole } = await res.json();
@@ -472,23 +485,209 @@ export async function refreshSession(
 
     const cookieStore = cookies();
 
-    (await cookieStore).set('token', access_token, {
+    (await cookieStore).set("token", access_token, {
       httpOnly: true,
-      path: '/',
+      path: "/",
     });
 
-    (await cookieStore).set('userId', Encrypt(userId), {
+    (await cookieStore).set("userId", Encrypt(userId), {
       httpOnly: true,
-      path: '/',
+      path: "/",
     });
 
-    (await cookieStore).set('userRole', Encrypt(userRole), {
+    (await cookieStore).set("userRole", Encrypt(userRole), {
       httpOnly: true,
-      path: '/',
+      path: "/",
     });
 
     return { success: true, redirectPath };
   } catch (err) {
-    return { error: 'Could not refresh session' };
+    return { error: "Could not refresh session" };
   }
+}
+
+const doctorSchema = z.object({
+  name: z.string().min(1, "Name is required"),
+  specialization: z.string().min(1, "Specialization is required"),
+  experience: z.coerce.number().min(0, "Experience must be a number"),
+  slots: z.array(z.string()).min(1, "At least one slot must be selected"),
+});
+
+export type DoctorState = {
+  message?: string;
+  errors: Record<string, string[]>;
+  values?: {
+    name: string;
+    specialization: string;
+    experience: string;
+    slots: string[];
+  };
+};
+
+export async function createDoctor(
+  prevState: DoctorState,
+  formData: FormData
+): Promise<DoctorState> {
+  const rawValues = {
+    name: formData.get("name")?.toString() || "",
+    specialization: formData.get("specialization")?.toString() || "",
+    experience: formData.get("experience")?.toString() || "",
+    slots: formData.getAll("slots").map(String),
+  };
+  const result = doctorSchema.safeParse(rawValues);
+
+  if (!result.success) {
+    return {
+      message: undefined,
+      errors: result.error.flatten().fieldErrors,
+      values: rawValues,
+    };
+  }
+
+  const doctorData = {
+    ...result.data,
+  };
+  const token = await GetTokenFromCookie("token");
+  console.log("token from the create doctor", token);
+
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/doctors`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(doctorData),
+  });
+
+  if (res.status === 401) {
+    console.log("Token expired or unauthorized");
+    throw new Error("unauthorized");
+  }
+
+  if (!res.ok) {
+    return {
+      message: "Failed to create doctor",
+      errors: {},
+    };
+  }
+
+  revalidatePath("/dashboard/manage-doctors");
+  return { message: "Doctor created successfully!", errors: {} };
+}
+
+export type DoctorUpdateState = {
+  message?: string;
+  errors: Record<string, string[]>;
+  values?: {
+    id: string;
+    experience: string;
+    slots: string[];
+  };
+};
+
+const updateDoctorSchema = z.object({
+  id: z.string().min(1, "Doctor ID is required"),
+  experience: z.coerce.number().min(0, "Experience must be a valid number"),
+  slots: z.array(z.string()).min(1, "At least one slot must be selected"),
+});
+
+export async function updateDoctor(
+  prevState: DoctorUpdateState,
+  formData: FormData
+): Promise<DoctorUpdateState> {
+  const rawValues = {
+    id: formData.get("id")?.toString() || "",
+    experience: formData.get("experience")?.toString() || "",
+    slots: formData.getAll("slots").map(String),
+  };
+  const result = updateDoctorSchema.safeParse(rawValues);
+
+  if (!result.success) {
+    return {
+      message: undefined,
+      errors: result.error.flatten().fieldErrors,
+      values: rawValues,
+    };
+  }
+
+  const token = await GetTokenFromCookie("token");
+
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_API_BASE_URL}/doctors/update-doctor/${result.data.id}`,
+    {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        experience: result.data.experience,
+        slots: result.data.slots,
+      }),
+    }
+  );
+  
+  if (!response.ok) {
+    return {
+      message: "Failed to update doctor",
+      errors: {},
+      values: rawValues,
+    };
+  }
+
+  revalidatePath("/dashboard/manage-doctors/update");
+
+  return {
+    message: "Doctor updated successfully!",
+    errors: {},
+  };
+}
+
+
+
+
+
+export type DeleteDoctorState = {
+  message?: string;
+  errors?: Record<string, string[]>;
+};
+
+const deleteSchema = z.object({
+  id: z.string().min(1, 'Doctor ID is required'),
+});
+
+export async function deleteDoctor(prevState: DeleteDoctorState, formData: FormData): Promise<DeleteDoctorState> {
+  const result = deleteSchema.safeParse({
+    id: formData.get('id'),
+  });
+
+  if (!result.success) {
+    return {
+      message: undefined,
+      errors: result.error.flatten().fieldErrors,
+    };
+  }
+
+const token=await GetTokenFromCookie("token")
+
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/doctors/${result.data.id}`, {
+    method: 'DELETE',
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (!res.ok) {
+    return {
+      message: 'Failed to delete doctor',
+      errors: {},
+    };
+  }
+
+  revalidatePath('/dashboard/manage-doctors/delete');
+  return {
+    message: 'Doctor deleted successfully',
+    errors: {},
+  };
 }

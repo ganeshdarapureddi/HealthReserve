@@ -14,7 +14,7 @@ export default async function DoctorsPage() {
           <div className="mx-auto mt-1 h-1 w-20 bg-purple-800 rounded"></div>
         </div>
 
-        <div className="flex flex-wrap justify-between gap-y-5">
+        <div className="flex flex-wrap justify-items-start gap-y-5 gap-x-10">
           {doctors.map((doc) => (
             <DoctorCard key={doc._id} doctor={doc} />
           ))}

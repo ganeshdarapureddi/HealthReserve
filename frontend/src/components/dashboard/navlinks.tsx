@@ -21,6 +21,7 @@ export default function NavLinks() {
   const navLinksAdmin = [
     { name: 'Home', href: '/dashboard', icon: '/icons/home.svg' },
     { name: 'Admin Panel', href: '/dashboard/admin', icon: '/icons/admin.svg' },
+    { name: 'Manage Doctors', href: '/dashboard/manage-doctors', icon: '/icons/admin.svg' },
   ];
 
   const linksToRender = user?.userRole === Role.Admin ? navLinksAdmin : navLinksUser;
