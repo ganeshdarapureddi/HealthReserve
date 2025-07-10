@@ -4,12 +4,10 @@ import {
   Controller,
   Delete,
   Get,
-  Header,
   Param,
   Patch,
   Post,
   Query,
-  Sse,
   UseGuards,
 } from '@nestjs/common';
 import { AppointmentService } from './appointment.service';
@@ -20,7 +18,6 @@ import { ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
 import { RolesGuard } from 'src/guards/roles.guard';
 import { Roles } from 'src/decorators/roles.decorator';
 import { UpdateStatusDto } from './dto/updateStatusDto';
-import { Observable } from 'rxjs';
 
 @ApiBearerAuth('jwt-auth') //should be added to get the authorize button at top
 @UseGuards(JwtAuthGuard)

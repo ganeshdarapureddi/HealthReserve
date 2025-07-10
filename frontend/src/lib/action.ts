@@ -501,7 +501,8 @@ export async function refreshSession(
     });
 
     return { success: true, redirectPath };
-  } catch (err) {
+  } catch (err:any) {
+    console.log(err.message)
     return { error: "Could not refresh session" };
   }
 }
@@ -572,6 +573,8 @@ export async function createDoctor(
   }
 
   revalidatePath("/dashboard/manage-doctors");
+  revalidatePath("/dashboard/manage-doctors/update");
+  revalidatePath("/dashboard/manage-doctors/delete");
   return { message: "Doctor created successfully!", errors: {} };
 }
 
@@ -627,13 +630,18 @@ export async function updateDoctor(
     }
   );
   
+  if (response.status === 401) {
+    console.log("Token expired or unauthorized");
+    throw new Error("unauthorized");
+  }
+
   if (!response.ok) {
     return {
       message: "Failed to update doctor",
       errors: {},
       values: rawValues,
     };
-  }
+  } 
 
   revalidatePath("/dashboard/manage-doctors/update");
 
@@ -677,6 +685,11 @@ const token=await GetTokenFromCookie("token")
       Authorization: `Bearer ${token}`,
     },
   });
+
+  if (res.status === 401) {
+    console.log("Token expired or unauthorized");
+    throw new Error("unauthorized");
+  }
 
   if (!res.ok) {
     return {

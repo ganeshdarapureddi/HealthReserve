@@ -31,7 +31,7 @@ export default function AppointmentTable() {
 
   // Get query string values
   const pageParam = parseInt(searchParams.get('page') || '1');
-  const limitParam = parseInt(searchParams.get('limit') || '3');
+  const limitParam = parseInt(searchParams.get('limit') || '5')
   // const searchParam = searchParams.get('search') || '';
 
   const [currentPage, setCurrentPage] = useState(pageParam);
@@ -52,7 +52,7 @@ export default function AppointmentTable() {
     params.set('limit', itemsPerPage.toString());
     if (debouncedInput.trim()) params.set('search', debouncedInput.trim());
     router.replace(`?${params.toString()}`);
-  }, [currentPage, debouncedInput]);
+  }, [currentPage, debouncedInput,itemsPerPage,router]);
 
   // Fetch data
   useEffect(() => {
@@ -74,7 +74,7 @@ export default function AppointmentTable() {
       }
     };
     fetchAppointments();
-  }, [currentPage, debouncedInput]);
+  }, [currentPage, debouncedInput,itemsPerPage]);
 
   // Remove deleted appointment from local UI
   useEffect(() => {
@@ -136,7 +136,7 @@ export default function AppointmentTable() {
                   >
                     <td className="px-4 py-3 border-b">{a._id}</td>
                     <td className="px-4 py-3 border-b">{a.patientName}</td>
-                    <td className="px-4 py-3 border-b">{a.doctor.name}</td>
+                    <td className="px-4 py-3 border-b">Dr. {a.doctor?.name ?? 'Unknown Doctor'}</td>
                     <td className="px-4 py-3 border-b">{a.date}</td>
                     <td className="px-4 py-3 border-b">{a.slot}</td>
                     <td className="px-4 py-3 border-b">

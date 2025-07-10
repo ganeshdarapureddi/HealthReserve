@@ -24,6 +24,9 @@ export class Doctor {
     ],
   })
   slots: { time: string; booked: boolean }[];
+
+  @Prop({ default: false })
+  isDeleted: boolean;
 }
 
 export const DoctorSchema = SchemaFactory.createForClass(Doctor);

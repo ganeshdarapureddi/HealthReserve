@@ -66,13 +66,17 @@ export class DoctorService {
   }
 
   async delete(id: string): Promise<Doctor> {
-    const deletedDoctor = await this.doctorModel.findByIdAndDelete(id);
+    const deletedDoctor = await this.doctorModel.findByIdAndUpdate(
+      id,
+      { isDeleted: true },
+      { new: true }
+    );
     if (!deletedDoctor) {
       throw new NotFoundException('Doctor not found');
     }
     return deletedDoctor;
   }
-
+  
   // CRON JOB: Runs every day at 12:01 AM
   // @Cron('50 16 * * *',{
   //   timeZone: 'Asia/Kolkata'

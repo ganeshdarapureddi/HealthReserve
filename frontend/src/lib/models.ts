@@ -23,6 +23,7 @@ export interface IDoctor {
     time: string;
     booked: boolean;
   }[];
+  isDeleted:boolean
 }
 
 export interface IUser {

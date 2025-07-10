@@ -22,7 +22,7 @@ export default function RegisterPage() {
       }, 2000);
     }
 
-  }, [state.success, router,state.message]);
+  }, [state.success, router,state.message,state.errors]);
 
   return (
     <div className='flex flex-col  min-h-screen justify-center items-center bg-cover '

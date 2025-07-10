@@ -34,7 +34,7 @@ export class AuthController {
 
     const accessToken = await this.jwtService.signAsync(payload, {
       secret: process.env.JWT_SECRET,
-      expiresIn: '1hr',
+      expiresIn: '30s',
     });
 
     const refreshToken = await this.jwtService.signAsync(payload, {
@@ -124,7 +124,7 @@ export class AuthController {
         { sub: payload.sub, role: payload.role },
         {
           secret: process.env.JWT_SECRET,
-          expiresIn: '1hr',
+          expiresIn: '30s',
         },
       );
   

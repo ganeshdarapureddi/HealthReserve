@@ -144,7 +144,7 @@ export default function CreateDoctorForm() {
   }
   catch (err: any) {
     if (err.message === "unauthorized") {
-      redirect(`/expire?from=/dashboard/manage-appointment/create`);
+      redirect(`/expire?from=/dashboard/manage-doctors/create`);
     }
     throw err;
   }

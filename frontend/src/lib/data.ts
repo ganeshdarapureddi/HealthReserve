@@ -8,7 +8,7 @@ const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL!;
 
 export async function getDoctors(): Promise<IDoctor[]> {
 
-  let token = await GetTokenFromCookie("token");
+  const token = await GetTokenFromCookie("token");
 
   const res = await fetch(`${BASE_URL}/doctors`, {
     method: "GET",

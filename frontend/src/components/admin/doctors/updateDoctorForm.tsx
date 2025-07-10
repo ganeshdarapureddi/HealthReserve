@@ -5,12 +5,14 @@ import { useActionState } from 'react';
 import { updateDoctor, DoctorUpdateState } from '@/lib/action';
 import { DEFAULT_SLOTS } from '@/components/admin/doctors/createDoctorForm';
 import { IDoctor } from '@/lib/models';
+import { redirect } from 'next/navigation';
 
 interface Props {
   doctors: IDoctor[];
 }
 
 export default function UpdateDoctorForm({ doctors }: Props) {
+  try{
   const initialState: DoctorUpdateState = {
     message: undefined,
     errors: {},
@@ -47,23 +49,24 @@ export default function UpdateDoctorForm({ doctors }: Props) {
       );
     }
   }, [selectedDoctor, state.values]);
+  const visibleDoctors=doctors.filter((a)=>a.isDeleted===false)
 
 
   return (
     <div>
       {/* Doctor Cards */}
       <div className="flex flex-wrap gap-6">
-        {doctors.map((doctor) => (
+        {visibleDoctors.map((doctor) => (
           <div
             key={doctor._id}
             onClick={() => handleDoctorSelect(doctor)}
-            className="bg-white min-w-[300px] p-4 rounded-lg shadow-md cursor-pointer hover:shadow-lg hover:bg-purple-900 border border-purple-200 group transition"
+            className="bg-white min-w-[250px] p-4 rounded-lg shadow-md  cursor-pointer hover:shadow-lg hover:bg-purple-900 border border-purple-200 group transition"
           >
             <div>
-              <h3 className="text-xl font-semibold group-hover:text-white transition">
-                {doctor.name}
+              <h3 className="text-xl font-semibold group-hover:text-white transition capitalize">
+                Dr. {doctor.name}
               </h3>
-              <p className="text-gray-600 group-hover:text-white transition">
+              <p className="text-gray-600 group-hover:text-white transition capitalize">
                 {doctor.specialization}
               </p>
               <p className="text-sm text-gray-500 group-hover:text-white transition">
@@ -159,4 +162,11 @@ export default function UpdateDoctorForm({ doctors }: Props) {
       )}
     </div>
   );
+}
+catch (err: any) {
+  if (err.message === "unauthorized") {
+    redirect(`/expire?from=/dashboard/manage-appointment/update`);
+  }
+  throw err;
+}
 }
