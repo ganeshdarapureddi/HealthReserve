@@ -6,11 +6,11 @@ import { CreateAppointmentDto } from './dto/createAppointmentDto';
 import { AppointmentStatus } from './enums/appointmentStatus';
 import { Cron } from '@nestjs/schedule';
 import { Doctor, DoctorDocument } from 'src/doctor/doctor.schema';
-import { Subject } from 'rxjs';
+
 
 @Injectable()
 export class AppointmentService {
-  private appointmentUpdates = new Subject<any>();
+  
   constructor(
     @InjectModel(Appointment.name)
     private appointmentModel: Model<AppointmentDocument>,
@@ -76,13 +76,15 @@ export class AppointmentService {
   async getPaginatedAppointments(page: number, limit: number, search: string) {
     const skip = (page - 1) * limit;
 
-    const searchRegex = new RegExp(search, 'i'); // case-insensitive
+    const searchRegex = new RegExp(search, 'i');
 
     const query = search
       ? {
           $or: [
-            { patientName: { $regex: searchRegex } },
-            { 'doctor.name': { $regex: searchRegex } },
+            { patientName: { $regex: searchRegex } }, 
+            { date: { $regex: searchRegex } },
+            { slot: { $regex: searchRegex } },
+            { status: { $regex: searchRegex } },
           ],
         }
       : {};
@@ -96,7 +98,6 @@ export class AppointmentService {
         .populate('doctor')
         .populate('user')
         .exec(),
-
       this.appointmentModel.countDocuments(query),
     ]);
 
