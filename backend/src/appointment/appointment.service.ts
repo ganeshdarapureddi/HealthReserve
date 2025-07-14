@@ -40,6 +40,28 @@ export class AppointmentService {
     return (await appointment.populate('user')).populate('doctor');
   }
 
+  async findOneByDoctorDateSlot(doctorId: string, date: string, slot: string) {
+    return this.appointmentModel.findOne({
+      doctor: doctorId,
+      date,
+      slot,
+      status: { $ne: 'cancelled' }, // Optional: ignore cancelled ones
+    });
+  }
+
+  async findByDoctorAndDate(
+    doctorId: string,
+    date: string
+  ): Promise<Appointment[]> {
+    return this.appointmentModel.find({
+      doctor: doctorId,
+      date,
+      status: { $ne: 'cancelled' },
+    });
+  } 
+  
+
+
   async delete(id: string): Promise<AppointmentDocument> {
     const deleted = await this.appointmentModel.findByIdAndDelete(id);
 
@@ -131,12 +153,7 @@ export class AppointmentService {
         { _id: appt._id },
         { $set: { status: AppointmentStatus.Cancelled } },
       );
-
-      await this.doctorModel.updateOne(
-        { _id: appt.doctor, 'slots.time': appt.slot },
-        { $set: { 'slots.$.booked': false } },
-      );
-
+      
       console.log(`Cancelled appointment ${appt._id}`);
     }
 

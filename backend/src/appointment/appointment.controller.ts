@@ -1,5 +1,6 @@
 // src/appointments/appointments.controller.ts
 import {
+  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -47,7 +48,7 @@ export class AppointmentController {
     example: 10,
     description: 'Items per page',
   })
-  @ApiQuery({
+  @ApiQuery({ 
     name: 'search',
     required: false,
     example: 'enter search value',
@@ -73,9 +74,18 @@ export class AppointmentController {
 
   @Post()
   async createAppointment(@Body() createAppointmentDto: CreateAppointmentDto) {
-    console.log('Received appointment DTO:', createAppointmentDto);
     const { patientName, user, doctor, date, slot } = createAppointmentDto;
-
+  
+    const existingAppointment = await this.appointmentService.findOneByDoctorDateSlot(
+      doctor,
+      date,
+      slot
+    );
+  
+    if (existingAppointment) {
+      throw new BadRequestException('This slot is already booked for the selected date.');
+    }
+  
     const appointment = await this.appointmentService.create({
       patientName,
       doctor,
@@ -83,7 +93,7 @@ export class AppointmentController {
       date,
       slot,
     });
-
+  
     return appointment.toObject();
   }
 

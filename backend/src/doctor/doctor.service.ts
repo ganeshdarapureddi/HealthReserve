@@ -15,16 +15,8 @@ export class DoctorService {
     return this.doctorModel.find().exec();
   }
 
-  async updateSlotStatus(doctorId: string, slot: string, status: boolean) {
-    if (slot === undefined || status === undefined) {
-      throw new NotFoundException(
-        'cannot match the body please enter the body to update the slot',
-      );
-    }
-    return this.doctorModel.updateOne(
-      { _id: doctorId, 'slots.time': slot },
-      { $set: { 'slots.$.booked': status } },
-    );
+  async findById(id: string): Promise<Doctor | null> {
+    return this.doctorModel.findById(id);
   }
 
   async create(createDoctorDto: CreateDoctorDto): Promise<Doctor> {
@@ -32,7 +24,6 @@ export class DoctorService {
 
     const transformedSlots = slots.map((time) => ({
       time,
-      booked: false,
     }));
 
     const createdDoctor = new this.doctorModel({
@@ -51,7 +42,6 @@ export class DoctorService {
     if (updateDto.slots) {
       updateData.slots = updateDto.slots.map((time) => ({
         time,
-        booked: false,
       }));
     }
     const updatedDoctor = await this.doctorModel.findByIdAndUpdate(

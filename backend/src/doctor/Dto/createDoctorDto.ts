@@ -22,5 +22,5 @@ export class CreateDoctorDto {
   })
   @IsArray()
   @IsString({ each: true })
-  slots: string[]; // Just times
+  slots: string[];
 }

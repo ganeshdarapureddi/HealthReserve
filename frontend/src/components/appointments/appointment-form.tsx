@@ -4,44 +4,73 @@ import { useActionState, useState, useEffect } from 'react';
 import { bookAppointment, AppointmentState } from '@/lib/action';
 
 interface AppointmentFormProps {
+  token:string|undefined;
   doctors: {
     _id: string;
     name: string;
     specialization: string;
-    slots: { time: string; booked: boolean }[];
   }[];
 }
 
-export default function AppointmentForm({ doctors }: AppointmentFormProps) {
+export default function AppointmentForm({ doctors,token }: AppointmentFormProps) {
   const initialState: AppointmentState = { message: undefined, errors: {} };
   const [state, formAction] = useActionState(bookAppointment, initialState);
   const [selectedDoctor, setSelectedDoctor] = useState(doctors[0]);
-  const [selectedSlot, setSelectedSlot] = useState(
-    doctors[0].slots.find((s) => !s.booked) || doctors[0].slots[0]
-  );
-
+  const [selectedSlot, setSelectedSlot] = useState<{ time: string } | null>(null);
   const [appointmentDate, setAppointmentDate] = useState('');
+  const [slots, setSlots] = useState<{ time: string; booked: boolean }[]>([]);
 
   useEffect(() => {
     const tomorrow = new Date();
-    console.log("Date of today",tomorrow)
-    tomorrow.setDate(tomorrow.getDate() + 1);
+    tomorrow.setDate(tomorrow.getDate() + +1);
     const yyyy = tomorrow.getFullYear();
     const mm = String(tomorrow.getMonth() + 1).padStart(2, '0');
     const dd = String(tomorrow.getDate()).padStart(2, '0');
-    setAppointmentDate(`${dd}-${mm}-${yyyy}`);
+    const formatted = `${yyyy}-${mm}-${dd}`; // ISO format for backend
+    setAppointmentDate(formatted);
   }, []);
+
+  // Fetch available slots when doctor or date changes
+  useEffect(() => {
+    if (!selectedDoctor || !appointmentDate) return;
+    const fetchSlots = async () => {
+      
+      try {
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_API_BASE_URL!}/doctors/${selectedDoctor._id}/slots?date=${appointmentDate}`,
+          {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+        );
+        if (res.status === 401) {
+          console.log("Token expired or unauthorized");
+          throw new Error("unauthorized");
+        }
+
+        if (!res.ok) throw new Error('Failed to fetch slots');
+        const data = await res.json();
+        setSlots(data);
+        setSelectedSlot(data.find((s: any) => !s.booked) || null);
+      } catch (err) {
+        console.error('Error fetching slots:', err);
+      }
+    };
+  
+    fetchSlots();
+  }, [selectedDoctor, appointmentDate]);
+  
 
   const handleDoctorChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const doctor = doctors.find((doc) => doc._id === e.target.value);
-    if (doctor) {
-      setSelectedDoctor(doctor);
-      setSelectedSlot(doctor.slots.find((s) => !s.booked) || doctor.slots[0]);
-    }
+    if (doctor) setSelectedDoctor(doctor);
   };
 
   const handleSlotChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const slot = selectedDoctor.slots.find((s) => s.time === e.target.value);
+    const slot = slots.find((s) => s.time === e.target.value);
     if (slot) setSelectedSlot(slot);
   };
 
@@ -58,10 +87,10 @@ export default function AppointmentForm({ doctors }: AppointmentFormProps) {
           </label>
           <input
             type="text"
-            placeholder='Patient Name'
+            placeholder="Patient Name"
             name="patientName"
             id="patientName"
-            className="w-full px-3 py-2 border border-gray-300 bg-white rounded-md text-base focus:outline-none focus:ring-2 focus:ring-purple-400"
+            className="w-full px-3 py-2 border border-gray-300 bg-white rounded-md"
           />
           {state.errors?.patientName && (
             <p className="text-red-500 text-sm mt-1">{state.errors.patientName[0]}</p>
@@ -76,7 +105,7 @@ export default function AppointmentForm({ doctors }: AppointmentFormProps) {
           <select
             name="doctorId"
             id="doctorId"
-            className="w-full px-3 py-2 border border-gray-300 bg-white rounded-md text-base font-serif focus:outline-none focus:ring-2 focus:ring-purple-400"
+            className="w-full px-3 py-2 border border-gray-300 bg-white rounded-md"
             onChange={handleDoctorChange}
             value={selectedDoctor._id}
           >
@@ -91,7 +120,7 @@ export default function AppointmentForm({ doctors }: AppointmentFormProps) {
           )}
         </div>
 
-        {/* Date - read-only */}
+        {/* Appointment Date */}
         <div>
           <label htmlFor="date" className="block text-md font-semibold text-gray-700 mb-1">
             Appointment Date
@@ -102,11 +131,11 @@ export default function AppointmentForm({ doctors }: AppointmentFormProps) {
             name="date"
             value={appointmentDate}
             readOnly
-            className="w-full px-3 py-2 border border-gray-300 bg-gray-100 rounded-md text-base focus:outline-none"
+            className="w-full px-3 py-2 border border-gray-300 bg-gray-100 rounded-md"
           />
         </div>
 
-        {/* Slot */}
+        {/* Slot Selection */}
         <div>
           <label htmlFor="slot" className="block text-md font-semibold text-gray-700 mb-1">
             Select Slot
@@ -114,11 +143,11 @@ export default function AppointmentForm({ doctors }: AppointmentFormProps) {
           <select
             name="slot"
             id="slot"
-            className="w-full px-3 py-2 border border-gray-300 bg-white rounded-md text-base focus:outline-none focus:ring-2 focus:ring-purple-400"
+            className="w-full px-3 py-2 border border-gray-300 bg-white rounded-md"
             onChange={handleSlotChange}
-            value={selectedSlot?.time}
+            value={selectedSlot?.time || ''}
           >
-            {selectedDoctor.slots.map((slot) => (
+            {slots.map((slot) => (
               <option key={slot.time} value={slot.time} disabled={slot.booked}>
                 {slot.time} {slot.booked ? '(Booked)' : ''}
               </option>
@@ -134,7 +163,7 @@ export default function AppointmentForm({ doctors }: AppointmentFormProps) {
       <div className="flex justify-end mt-8">
         <button
           type="submit"
-          className="px-6 py-3 text-white font-semibold rounded-lg bg-gradient-to-r from-purple-600 to-indigo-700 hover:from-purple-700 hover:to-indigo-800 text-center transition"
+          className="px-6 py-3 text-white font-semibold rounded-lg bg-gradient-to-r from-purple-600 to-indigo-700 hover:from-purple-700 hover:to-indigo-800 transition"
         >
           Book Appointment
         </button>

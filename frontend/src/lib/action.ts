@@ -362,30 +362,10 @@ export async function deleteAppointment(
     };
   }
 
-  const data = await res.json();
+  // const data = await res.json();
   // console.log("Action after deletion:", data);
   // console.log("doctorID", data.doctor._id);
   // console.log("slots", data.slot);
-
-  const token = await GetTokenFromCookie("token");
-  const slotUpdates = await fetch(
-    `${process.env.NEXT_PUBLIC_API_BASE_URL}/doctors/${data.doctor._id}`,
-    {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({
-        slot: data.slot,
-        status: false,
-      }),
-    }
-  );
-  if (!slotUpdates.ok) {
-    const error = await slotUpdates.json();
-    console.error("Failed to update slot:", error);
-  }
 
   return { message: "Appointment removed successfully" };
 }
@@ -415,31 +395,10 @@ export async function updateAppointmentStatus(
       };
     }
 
-    const data = await res.json();
-    console.log("this is from the admin panel", data.doctor._id);
-    console.log("this is from the admin panel", data.slot);
+    // const data = await res.json();
+    // console.log("this is from the admin panel", data.doctor._id);
+    // console.log("this is from the admin panel", data.slot);
 
-    if (
-      status === "completed" ||
-      (status === "cancelled" && data?.doctor?._id && data?.slot)
-    ) {
-      const token = await GetTokenFromCookie("token");
-
-      await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/doctors/${data.doctor._id}`,
-        {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            slot: data.slot,
-            status: false,
-          }),
-        }
-      );
-    }
 
     return { message: "Status updated successfully" };
   } catch (e) {

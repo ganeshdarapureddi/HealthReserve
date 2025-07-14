@@ -19,11 +19,10 @@ export class Doctor {
       {
         _id: false,
         time: { type: String, required: true },
-        booked: { type: Boolean, default: false },
-      },  
+      },
     ],
   })
-  slots: { time: string; booked: boolean }[];
+  slots: { time: string }[];
 
   @Prop({ default: false })
   isDeleted: boolean;

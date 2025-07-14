@@ -59,7 +59,7 @@ export default async function AppointmentsPage() {
                     >
                       <td className="px-4 py-3 text-gray-600 font-medium">{index + 1}</td>
                       <td className="px-4 py-3 capitalize">{a.patientName}</td>
-                      <td className="px-4 py-3 capitalize">{a.doctor?.name || '-'}</td>
+                      <td className="px-4 py-3 capitalize">Dr. {a.doctor?.name || '-'}</td>
                       <td className="px-4 py-3">{a.date}</td>
                       <td className="px-4 py-3">{a.slot}</td>
                       <td className="px-4 py-3">
